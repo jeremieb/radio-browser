@@ -10,6 +10,8 @@ struct RadioMenuBarView: View {
     @Environment(ShazamService.self) private var shazam
     @Environment(\.openWindow) private var openWindow
     @State private var shazamPulse = false
+    
+    let analytics = Analytics.shared
 
     private var isExpandedPlayer: Bool {
         player.isPlaying || player.nowPlayingArtworkURL != nil
@@ -197,6 +199,9 @@ struct RadioMenuBarView: View {
 
         Button {
             player.playStation(at: index)
+            if let radioName = radio.name {
+                analytics.sendSignal(signal: "play", parameters: ["radio.name":radioName])
+            }
         } label: {
             stationThumbnail(for: radio)
                 .frame(width: 46, height: 46)
@@ -233,6 +238,7 @@ struct RadioMenuBarView: View {
             } else {
                 shazam.startListening()
             }
+            analytics.sendSignal(signal: "shazam", parameters: nilx)
         } label: {
             Image(systemName: "shazam.logo.fill")
                 .font(.system(size: 28, weight: .semibold))

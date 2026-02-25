@@ -6,9 +6,17 @@
 //
 
 import SwiftUI
+import TelemetryDeck
 
 @main
 struct Radio_BrowserApp: App {
+    
+    
+    init() {
+        let config = TelemetryDeck.Config(appID: "A8A442EC-802E-4C4A-9702-67F46C7D6245")
+        TelemetryDeck.initialize(config: config)
+    }
+    
 #if os(macOS)
     @State private var shazam = ShazamService()
 #endif
