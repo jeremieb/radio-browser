@@ -7,6 +7,9 @@ import AppKit
 struct RadioMenuBarView: View {
     @StateObject private var player = RadioPlayerViewModel()
     @State private var coverTint: Color = Color(red: 0.42, green: 0.58, blue: 0.86)
+    @Environment(ShazamService.self) private var shazam
+    @Environment(\.openWindow) private var openWindow
+    @State private var shazamPulse = false
 
     private var isExpandedPlayer: Bool {
         player.isPlaying || player.nowPlayingArtworkURL != nil
@@ -24,12 +27,29 @@ struct RadioMenuBarView: View {
                 if isExpandedPlayer {
                     expandedPlayerContent
                 }
+
+                if let message = shazam.statusMessage {
+                    shazamStatusFooter(message: message)
+                }
             }
             .frame(maxWidth: 420, maxHeight: 420, alignment: .topLeading)
             .padding(16)
         }
         .task(id: player.nowPlayingArtworkURL) {
             await refreshCoverTint()
+        }
+        .onChange(of: shazam.state) { _, newState in
+            switch newState {
+            case .listening:
+                withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
+                    shazamPulse = true
+                }
+            case .matched:
+                withAnimation(.default) { shazamPulse = false }
+                openWindow(id: "shazam-result")
+            default:
+                withAnimation(.default) { shazamPulse = false }
+            }
         }
     }
 
@@ -150,6 +170,8 @@ struct RadioMenuBarView: View {
                 Spacer(minLength: 0)
 
                 HStack(spacing: 22) {
+                    shazamButton
+
                     Button {
                         player.togglePlayback()
                     } label: {
@@ -202,6 +224,47 @@ struct RadioMenuBarView: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .fill(Color(red: 0.32, green: 0.39, blue: 0.72))
         }
+    }
+
+    private var shazamButton: some View {
+        Button {
+            if shazam.isListening {
+                shazam.cancel()
+            } else {
+                shazam.startListening()
+            }
+        } label: {
+            Image(systemName: "shazam.logo.fill")
+                .font(.system(size: 28, weight: .semibold))
+                .foregroundStyle(shazam.isListening ? Color.cyan : Color.white)
+                .frame(width: 44, height: 44)
+                .scaleEffect(shazamPulse ? 1.18 : 1.0)
+                .shadow(color: shazam.isListening ? Color.cyan.opacity(0.6) : Color.black.opacity(0.3), radius: 8, y: 4)
+        }
+        .buttonStyle(.plain)
+        .help(shazam.isListening ? "Listening… tap to cancel" : "Identify with Shazam")
+    }
+
+    @ViewBuilder
+    private func shazamStatusFooter(message: String) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: "shazam.logo.fill")
+                .font(.system(size: 11, weight: .semibold))
+            Text(message)
+                .font(.footnote)
+            Spacer()
+            Button {
+                shazam.resetStatus()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 10, weight: .bold))
+            }
+            .buttonStyle(.plain)
+        }
+        .foregroundStyle(.white.opacity(0.75))
+        .padding(.horizontal, 4)
+        .padding(.top, 6)
+        .transition(.opacity.combined(with: .move(edge: .bottom)))
     }
 
     private var artworkFallback: some View {
