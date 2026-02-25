@@ -23,7 +23,7 @@ struct Radio_BrowserApp: App {
 
     var body: some Scene {
 #if os(macOS)
-        MenuBarExtra("Radio Browser", image: "my.radio") {
+        MenuBarExtra("Radio Browser", image: "my.radio.small") {
             RadioMenuBarView()
                 .environment(shazam)
         }
