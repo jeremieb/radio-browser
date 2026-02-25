@@ -142,27 +142,12 @@ struct RadioMenuBarView: View {
 
     private var expandedPlayerContent: some View {
         ZStack(alignment: .trailing) {
-            if let artworkURL = player.nowPlayingArtworkURL {
-                AsyncImage(url: artworkURL) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    case .failure:
-                        artworkFallback
-                    case .empty:
-                        ProgressView()
-                    @unknown default:
-                        artworkFallback
-                    }
-                }
+            vinylDisc
                 .frame(width: 210, height: 210)
                 .clipShape(Circle())
                 .overlay(Circle().stroke(Color.white.opacity(0.3), lineWidth: 1))
                 .shadow(color: .black.opacity(0.3), radius: 14, y: 8)
                 .rotationEffect(.degrees(vinylRotation))
-            }
 
 
             VStack(alignment: .leading, spacing: 8) {
@@ -181,7 +166,7 @@ struct RadioMenuBarView: View {
                             .foregroundStyle(.white)
                             .shadow(color: .black.opacity(0.65), radius: 8, x: 0, y: 3)
                     }
-                }.padding(.top, 46)
+                }.padding(.top)
                 Spacer(minLength: 0)
 
                 HStack(spacing: 22) {
@@ -284,6 +269,37 @@ struct RadioMenuBarView: View {
         .padding(.horizontal, 4)
         .padding(.top, 6)
         .transition(.opacity.combined(with: .move(edge: .bottom)))
+    }
+
+    @ViewBuilder
+    private var vinylDisc: some View {
+        if let artworkURL = player.nowPlayingArtworkURL {
+            AsyncImage(url: artworkURL) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().scaledToFill()
+                case .empty:
+                    ProgressView()
+                default:
+                    stationFallbackImage
+                }
+            }
+        } else {
+            stationFallbackImage
+        }
+    }
+
+    @ViewBuilder
+    private var stationFallbackImage: some View {
+        let radio = MyRadios.indices.contains(player.selectedStationIndex)
+            ? MyRadios[player.selectedStationIndex] : nil
+        if let imageName = radio?.image, !imageName.isEmpty, NSImage(named: imageName) != nil {
+            Image(imageName)
+                .resizable()
+                .scaledToFill()
+        } else {
+            artworkFallback
+        }
     }
 
     private var artworkFallback: some View {
