@@ -7,25 +7,37 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		022932502F4F107300976C81 /* SystemNowPlayingCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0229324C2F4F0FFA00976C81 /* SystemNowPlayingCenter.swift */; };
 		02E746C32F4EE92300CE6A43 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 02E746C22F4EE92300CE6A43 /* AppIcon.icon */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0229324C2F4F0FFA00976C81 /* SystemNowPlayingCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemNowPlayingCenter.swift; sourceTree = "<group>"; };
 		02E746C22F4EE92300CE6A43 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		1E5D6CEB261F4D4300D0138B /* Radio Browser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Radio Browser.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		0229324E2F4F104900976C81 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Components/AirPlayRoutePickerView.swift,
+				RadioMenuBarView.swift,
+			);
+			target = 1E5D6CEA261F4D4300D0138B /* Radio Browser */;
+		};
 		02A16B992F4EF3CA009D3C64 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				NowPlayingViewModel.swift,
+				RadioPlayerViewModel.swift,
 			);
 			target = 1E5D6CEA261F4D4300D0138B /* Radio Browser */;
 		};
 		02E746BD2F4EE32D00CE6A43 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				NowPlayingModels.swift,
 				Radio.swift,
 			);
 			target = 1E5D6CEA261F4D4300D0138B /* Radio Browser */;
@@ -36,14 +48,13 @@
 				Assets.xcassets,
 				ContentView.swift,
 				Radio_BrowserApp.swift,
-				RadioMenuBarView.swift,
-				SystemNowPlayingCenter.swift,
 			);
 			target = 1E5D6CEA261F4D4300D0138B /* Radio Browser */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		022932432F4F0EC500976C81 /* Views */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (0229324E2F4F104900976C81 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Views; sourceTree = "<group>"; };
 		02E746B92F4EE30D00CE6A43 /* Models */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (02E746BD2F4EE32D00CE6A43 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Models; sourceTree = "<group>"; };
 		02E746BA2F4EE31600CE6A43 /* View Models */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (02A16B992F4EF3CA009D3C64 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "View Models"; sourceTree = "<group>"; };
 		02E746BE2F4EE40600CE6A43 /* General */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (02E746BF2F4EE41300CE6A43 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = General; sourceTree = "<group>"; };
@@ -60,14 +71,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0229324B2F4F0FF100976C81 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				0229324C2F4F0FFA00976C81 /* SystemNowPlayingCenter.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		1E5D6CDE261F4D4200D0138B = {
 			isa = PBXGroup;
 			children = (
 				02E746C22F4EE92300CE6A43 /* AppIcon.icon */,
+				022932432F4F0EC500976C81 /* Views */,
 				02E746BE2F4EE40600CE6A43 /* General */,
 				02E746BA2F4EE31600CE6A43 /* View Models */,
 				02E746B92F4EE30D00CE6A43 /* Models */,
 				1E5D6CEC261F4D4300D0138B /* Products */,
+				0229324B2F4F0FF100976C81 /* Services */,
 			);
 			sourceTree = "<group>";
 		};
@@ -148,6 +169,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				022932502F4F107300976C81 /* SystemNowPlayingCenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

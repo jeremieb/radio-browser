@@ -1,11 +1,4 @@
-import SwiftUI
-
-struct NowPlayingSnapshot {
-    let title: String
-    let subtitle: String?
-    let artworkURL: URL?
-    let errorMessage: String?
-}
+import Foundation
 
 @MainActor
 final class NowPlayingViewModel: ObservableObject {
