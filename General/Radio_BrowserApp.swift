@@ -10,8 +10,15 @@ import SwiftUI
 @main
 struct Radio_BrowserApp: App {
     var body: some Scene {
+#if os(macOS)
+        MenuBarExtra("Radio Browser", image: "my.radio") {
+            RadioMenuBarView()
+        }
+        .menuBarExtraStyle(.window)
+#else
         WindowGroup {
             ContentView()
         }
+#endif
     }
 }
