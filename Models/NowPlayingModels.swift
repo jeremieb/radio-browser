@@ -129,7 +129,7 @@ struct NTSLink: Decodable {
 // MARK: - Worldwide FM API
 
 struct WorldwideNowPlayingResponse: Decodable {
-    let success: Bool?
+    let success: Bool
     let result: WorldwideNowPlayingResult?
 }
 
@@ -153,6 +153,28 @@ struct WorldwideNowPlayingMetadata: Decodable {
 
 struct WorldwideNowPlayingMedia: Decodable {
     let type: String?
+}
+
+// MARK: - FIP (Radio France) API
+
+struct FIPNowPlayingResponse: Decodable {
+    let steps: [String: FIPStep]
+    let levels: [FIPLevel]
+}
+
+struct FIPLevel: Decodable {
+    let items: [String]
+    let position: Int
+}
+
+struct FIPStep: Decodable {
+    let title: String?
+    let highlightedArtists: [String]?
+    let authors: String?
+    let titreAlbum: String?
+    let visual: URL?
+    let start: TimeInterval?
+    let end: TimeInterval?
 }
 
 // MARK: - Helpers

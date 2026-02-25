@@ -78,6 +78,11 @@ final class NowPlayingViewModel: ObservableObject {
                 return
             }
 
+            if let fipResponse = try? decoder.decode(FIPNowPlayingResponse.self, from: data) {
+                applyFIPNowPlaying(fipResponse, radio: radio)
+                return
+            }
+
             throw DecodingError.dataCorrupted(
                 .init(codingPath: [], debugDescription: "Unsupported now-playing response format")
             )
@@ -109,6 +114,24 @@ final class NowPlayingViewModel: ObservableObject {
         title = content?.title ?? metadata?.title ?? (radio.name ?? "Live")
         subtitle = metadata?.artist ?? metadata?.title ?? response.result?.status
         artworkURL = nil
+        errorMessage = nil
+        publishUpdate()
+    }
+
+    private func applyFIPNowPlaying(_ response: FIPNowPlayingResponse, radio: Radio) {
+        // Use levels[0].position to find the current step ID, then look it up in steps.
+        let step: FIPStep? = {
+            guard let level = response.levels.first else { return nil }
+            let index = level.position
+            guard index >= 0, index < level.items.count else { return nil }
+            let stepId = level.items[index]
+            return response.steps[stepId]
+        }()
+
+        let artist = step?.highlightedArtists?.first ?? step?.authors
+        title = step?.title ?? (radio.name ?? "Live")
+        subtitle = artist
+        artworkURL = step?.visual
         errorMessage = nil
         publishUpdate()
     }
