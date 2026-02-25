@@ -158,7 +158,7 @@ let MyRadios: [Radio] = [
     Radio(
         name: "NTS 2",
         streamURL: URL(string: "https://stream-relay-geo.ntslive.net/stream2")!,
-        nowPlayingAPI: URL(string: "https://www.nts.live/api/v2/live/2")!,
+        nowPlayingAPI: URL(string: "https://www.nts.live/api/v2/live")!,
         image: "NTS",
         description: "NTS Radio (also known as NTS Live or simply NTS) is a music radio platform which was founded in 2011 in Hackney, East London by Femi Adeyemi \"for an international community of music lovers\" The platform prioritizes showcasing niche artists in its radio programming and live events. NTS Radio's tagline is \"Don't Assume\".",
         disable: false

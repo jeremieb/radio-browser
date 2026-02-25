@@ -1,6 +1,11 @@
-#if os(macOS)
-import Foundation
-import Combine
+import SwiftUI
+
+struct NowPlayingSnapshot {
+    let title: String
+    let subtitle: String?
+    let artworkURL: URL?
+    let errorMessage: String?
+}
 
 @MainActor
 final class NowPlayingViewModel: ObservableObject {
@@ -8,6 +13,8 @@ final class NowPlayingViewModel: ObservableObject {
     @Published private(set) var subtitle: String?
     @Published private(set) var artworkURL: URL?
     @Published private(set) var errorMessage: String?
+
+    var onUpdate: ((NowPlayingSnapshot) -> Void)?
 
     private var updateTask: Task<Void, Never>?
 
@@ -19,6 +26,7 @@ final class NowPlayingViewModel: ObservableObject {
             subtitle = "No now-playing endpoint"
             artworkURL = nil
             errorMessage = nil
+            publishUpdate()
             return
         }
 
@@ -42,6 +50,7 @@ final class NowPlayingViewModel: ObservableObject {
             subtitle = nil
             artworkURL = nil
             errorMessage = nil
+            publishUpdate()
         }
     }
 
@@ -49,6 +58,7 @@ final class NowPlayingViewModel: ObservableObject {
         title = "Stopped"
         subtitle = nil
         errorMessage = nil
+        publishUpdate()
     }
 
     private func refresh(for radio: Radio) async {
@@ -57,6 +67,7 @@ final class NowPlayingViewModel: ObservableObject {
             subtitle = "No now-playing endpoint"
             artworkURL = nil
             errorMessage = nil
+            publishUpdate()
             return
         }
 
@@ -72,12 +83,25 @@ final class NowPlayingViewModel: ObservableObject {
             subtitle = now?.broadcastTitle
             artworkURL = details?.media?.pictureMedium ?? details?.media?.backgroundMedium
             errorMessage = nil
+            publishUpdate()
         } catch {
             title = radio.name ?? "Live"
             subtitle = "Unable to fetch now playing"
             artworkURL = nil
             errorMessage = error.localizedDescription
+            publishUpdate()
         }
+    }
+
+    private func publishUpdate() {
+        onUpdate?(
+            NowPlayingSnapshot(
+                title: title,
+                subtitle: subtitle,
+                artworkURL: artworkURL,
+                errorMessage: errorMessage
+            )
+        )
     }
 
     private func bestChannelMatch(in channels: [NTSLiveChannel], for radio: Radio) -> NTSLiveChannel? {
@@ -93,4 +117,3 @@ final class NowPlayingViewModel: ObservableObject {
         return name.contains("2") ? "2" : "1"
     }
 }
-#endif

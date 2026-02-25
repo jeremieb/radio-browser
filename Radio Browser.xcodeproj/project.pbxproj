@@ -16,6 +16,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		02A16B992F4EF3CA009D3C64 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				NowPlayingViewModel.swift,
+			);
+			target = 1E5D6CEA261F4D4300D0138B /* Radio Browser */;
+		};
 		02E746BD2F4EE32D00CE6A43 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -28,9 +35,9 @@
 			membershipExceptions = (
 				Assets.xcassets,
 				ContentView.swift,
-				NowPlayingViewModel.swift,
 				Radio_BrowserApp.swift,
 				RadioMenuBarView.swift,
+				SystemNowPlayingCenter.swift,
 			);
 			target = 1E5D6CEA261F4D4300D0138B /* Radio Browser */;
 		};
@@ -38,7 +45,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		02E746B92F4EE30D00CE6A43 /* Models */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (02E746BD2F4EE32D00CE6A43 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Models; sourceTree = "<group>"; };
-		02E746BA2F4EE31600CE6A43 /* View Models */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "View Models"; sourceTree = "<group>"; };
+		02E746BA2F4EE31600CE6A43 /* View Models */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (02A16B992F4EF3CA009D3C64 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "View Models"; sourceTree = "<group>"; };
 		02E746BE2F4EE40600CE6A43 /* General */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (02E746BF2F4EE41300CE6A43 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = General; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -289,7 +296,7 @@
 					"@executable_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jeremieberduck.radioBrowser;
 				PRODUCT_NAME = "Radio Browser";
 				REGISTER_APP_GROUPS = YES;
@@ -300,6 +307,8 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TVOS_DEPLOYMENT_TARGET = 26.0;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
@@ -325,7 +334,7 @@
 					"@executable_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jeremieberduck.radioBrowser;
 				PRODUCT_NAME = "Radio Browser";
 				REGISTER_APP_GROUPS = YES;
@@ -336,7 +345,9 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TVOS_DEPLOYMENT_TARGET = 26.0;
 				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
