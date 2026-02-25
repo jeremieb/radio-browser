@@ -1,14 +1,20 @@
 #if os(macOS)
 import SwiftUI
-import AVFoundation
-import AVKit
-import AppKit
 import CoreImage
 import CoreImage.CIFilterBuiltins
+import AppKit
 
 struct RadioMenuBarView: View {
+    
     @StateObject private var player = RadioPlayerViewModel()
     @State private var coverTint: Color = Color(red: 0.42, green: 0.58, blue: 0.86)
+    @Environment(ShazamService.self) private var shazam
+    @Environment(\.openWindow) private var openWindow
+    @State private var shazamPulse = false
+    @State private var vinylRotation: Double = 0
+    @State private var vinylAnimationTask: Task<Void, Never>?
+    
+    let analytics = Analytics.shared
 
     private var isExpandedPlayer: Bool {
         player.isPlaying || player.nowPlayingArtworkURL != nil
@@ -26,12 +32,40 @@ struct RadioMenuBarView: View {
                 if isExpandedPlayer {
                     expandedPlayerContent
                 }
+
+                if let message = shazam.statusMessage {
+                    shazamStatusFooter(message: message)
+                }
             }
-            .frame(maxWidth: 420, maxHeight: 420, alignment: .topLeading)
+            .frame(maxWidth: 460, maxHeight: 460, alignment: .topLeading)
             .padding(16)
         }
         .task(id: player.nowPlayingArtworkURL) {
             await refreshCoverTint()
+        }
+        .onChange(of: player.isPlaying) { _, isPlaying in
+            vinylAnimationTask?.cancel()
+            if isPlaying {
+                vinylAnimationTask = Task {
+                    while !Task.isCancelled {
+                        try? await Task.sleep(nanoseconds: 16_000_000) // ~60 fps
+                        vinylRotation += 0.6
+                    }
+                }
+            }
+        }
+        .onChange(of: shazam.state) { _, newState in
+            switch newState {
+            case .listening:
+                withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
+                    shazamPulse = true
+                }
+            case .matched:
+                withAnimation(.default) { shazamPulse = false }
+                openWindow(id: "shazam-result")
+            default:
+                withAnimation(.default) { shazamPulse = false }
+            }
         }
     }
 
@@ -65,7 +99,7 @@ struct RadioMenuBarView: View {
                 )
             }
         }
-        .frame(maxWidth: 420, maxHeight: 420)
+        .frame(maxWidth: 460, maxHeight: 460)
         .background(.ultraThinMaterial)
     }
 
@@ -108,50 +142,36 @@ struct RadioMenuBarView: View {
 
     private var expandedPlayerContent: some View {
         ZStack(alignment: .trailing) {
-            if let artworkURL = player.nowPlayingArtworkURL {
-                AsyncImage(url: artworkURL) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    case .failure:
-                        artworkFallback
-                    case .empty:
-                        ProgressView()
-                    @unknown default:
-                        artworkFallback
-                    }
-                }
+            vinylDisc
                 .frame(width: 210, height: 210)
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                )
+                .clipShape(Circle())
+                .overlay(Circle().stroke(Color.white.opacity(0.3), lineWidth: 1))
                 .shadow(color: .black.opacity(0.3), radius: 14, y: 8)
-            }
-            
-            
-            VStack(alignment: .leading, spacing: 8) {
-                Text(player.nowPlayingTitle)
-                    .font(.body).fontWidth(.expanded).fontWeight(.bold)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.7)
-                    .foregroundStyle(.white)
-                    .shadow(color: .black.opacity(0.65), radius: 8, x: 0, y: 3)
+                .rotationEffect(.degrees(vinylRotation))
 
-                if let subtitle = player.nowPlayingSubtitle {
-                    Text(subtitle)
-                        .font(.footnote).fontWeight(.medium)
+
+            VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading) {
+                    Text(player.nowPlayingTitle)
+                        .font(.body).fontWidth(.expanded).fontWeight(.bold)
                         .lineLimit(2)
+                        .minimumScaleFactor(0.7)
                         .foregroundStyle(.white)
                         .shadow(color: .black.opacity(0.65), radius: 8, x: 0, y: 3)
-                }
-
+                    
+                    if let subtitle = player.nowPlayingSubtitle {
+                        Text(subtitle)
+                            .font(.footnote).fontWeight(.medium)
+                            .lineLimit(2)
+                            .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.65), radius: 8, x: 0, y: 3)
+                    }
+                }.padding(.top)
                 Spacer(minLength: 0)
 
                 HStack(spacing: 22) {
+                    shazamButton
+
                     Button {
                         player.togglePlayback()
                     } label: {
@@ -168,7 +188,7 @@ struct RadioMenuBarView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-        }.frame(maxWidth: 420, maxHeight: 420, alignment: .bottom)
+        }.frame(maxWidth: 460, maxHeight: 460, alignment: .bottom)
     }
 
     @ViewBuilder
@@ -177,6 +197,9 @@ struct RadioMenuBarView: View {
 
         Button {
             player.playStation(at: index)
+            if let radioName = radio.name {
+                analytics.sendSignal(signal: "play", parameters: ["radio.name":radioName])
+            }
         } label: {
             stationThumbnail(for: radio)
                 .frame(width: 46, height: 46)
@@ -206,8 +229,81 @@ struct RadioMenuBarView: View {
         }
     }
 
+    private var shazamButton: some View {
+        Button {
+            if shazam.isListening {
+                shazam.cancel()
+            } else {
+                shazam.startListening()
+            }
+            analytics.sendSignal(signal: "shazam", parameters: nil)
+        } label: {
+            Image(systemName: "shazam.logo.fill")
+                .font(.system(size: 28, weight: .semibold))
+                .foregroundStyle(shazam.isListening ? Color.cyan : Color.white)
+                .frame(width: 44, height: 44)
+                .scaleEffect(shazamPulse ? 1.18 : 1.0)
+                .shadow(color: shazam.isListening ? Color.cyan.opacity(0.6) : Color.black.opacity(0.3), radius: 8, y: 4)
+        }
+        .buttonStyle(.plain)
+        .help(shazam.isListening ? "Listening… tap to cancel" : "Identify with Shazam")
+    }
+
+    @ViewBuilder
+    private func shazamStatusFooter(message: String) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: "shazam.logo.fill")
+                .font(.system(size: 11, weight: .semibold))
+            Text(message)
+                .font(.footnote)
+            Spacer()
+            Button {
+                shazam.resetStatus()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 10, weight: .bold))
+            }
+            .buttonStyle(.plain)
+        }
+        .foregroundStyle(.white.opacity(0.75))
+        .padding(.horizontal, 4)
+        .padding(.top, 6)
+        .transition(.opacity.combined(with: .move(edge: .bottom)))
+    }
+
+    @ViewBuilder
+    private var vinylDisc: some View {
+        if let artworkURL = player.nowPlayingArtworkURL {
+            AsyncImage(url: artworkURL) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().scaledToFill()
+                case .empty:
+                    ProgressView()
+                default:
+                    stationFallbackImage
+                }
+            }
+        } else {
+            stationFallbackImage
+        }
+    }
+
+    @ViewBuilder
+    private var stationFallbackImage: some View {
+        let radio = MyRadios.indices.contains(player.selectedStationIndex)
+            ? MyRadios[player.selectedStationIndex] : nil
+        if let imageName = radio?.image, !imageName.isEmpty, NSImage(named: imageName) != nil {
+            Image(imageName)
+                .resizable()
+                .scaledToFill()
+        } else {
+            artworkFallback
+        }
+    }
+
     private var artworkFallback: some View {
-        RoundedRectangle(cornerRadius: 20, style: .continuous)
+        Circle()
             .fill(Color.white.opacity(0.22))
             .overlay {
                 Image(systemName: "music.note")
@@ -235,157 +331,6 @@ struct RadioMenuBarView: View {
         } catch {
             // Keep the existing tint when color extraction fails.
         }
-    }
-}
-
-@MainActor
-final class RadioPlayerViewModel: ObservableObject {
-    @Published var selectedStationIndex = 0
-    @Published var isPlaying = false
-    @Published var nowPlayingTitle = "Not playing"
-    @Published var nowPlayingSubtitle: String?
-    @Published var nowPlayingArtworkURL: URL?
-    @Published var nowPlayingErrorMessage: String?
-
-    let nowPlaying = NowPlayingViewModel()
-
-    private var player: AVPlayer?
-    private let systemNowPlaying = SystemNowPlayingCenter()
-
-    init() {
-        nowPlaying.onUpdate = { [weak self] snapshot in
-            self?.applyNowPlaying(snapshot)
-            self?.publishNowPlaying(snapshot: snapshot)
-        }
-
-        systemNowPlaying.configureRemoteCommands(
-            onPlay: { [weak self] in
-                self?.resumeOrPlaySelectedStation()
-                return .success
-            },
-            onPause: { [weak self] in
-                self?.pause()
-                return .success
-            },
-            onStop: { [weak self] in
-                self?.stop()
-                return .success
-            }
-        )
-    }
-
-    func playStation(at index: Int) {
-        guard MyRadios.indices.contains(index) else { return }
-        selectedStationIndex = index
-        playSelectedStation()
-    }
-
-    func togglePlayback() {
-        if isPlaying {
-            pause()
-        } else {
-            resumeOrPlaySelectedStation()
-        }
-    }
-
-    func playSelectedStation() {
-        guard MyRadios.indices.contains(selectedStationIndex) else {
-            return
-        }
-
-        let radio = MyRadios[selectedStationIndex]
-
-        guard let streamURL = radio.streamURL else {
-            return
-        }
-
-        if player != nil {
-            stopPlayback(resetNowPlaying: true)
-        }
-
-        let item = AVPlayerItem(url: streamURL)
-        player = AVPlayer(playerItem: item)
-        player?.play()
-
-        isPlaying = true
-        publishNowPlaying(snapshot: nil)
-        nowPlaying.startUpdating(for: radio)
-    }
-
-    func pause() {
-        guard let player else { return }
-        player.pause()
-        isPlaying = false
-        publishNowPlaying(snapshot: nil)
-    }
-
-    func stop() {
-        stopPlayback(resetNowPlaying: false)
-        nowPlaying.setStoppedState()
-        publishNowPlaying(snapshot: nil)
-    }
-
-    private func resumeOrPlaySelectedStation() {
-        if let player {
-            player.play()
-            isPlaying = true
-            publishNowPlaying(snapshot: nil)
-        } else {
-            playSelectedStation()
-        }
-    }
-
-    private func stopPlayback(resetNowPlaying: Bool) {
-        player?.pause()
-        player = nil
-        isPlaying = false
-
-        if resetNowPlaying {
-            nowPlaying.stopUpdating(resetState: true)
-        } else {
-            nowPlaying.stopUpdating(resetState: false)
-        }
-
-        if !isPlaying {
-            systemNowPlaying.clear()
-        }
-    }
-
-    private func applyNowPlaying(_ snapshot: NowPlayingSnapshot) {
-        nowPlayingTitle = snapshot.title
-        nowPlayingSubtitle = snapshot.subtitle
-        nowPlayingArtworkURL = snapshot.artworkURL
-        nowPlayingErrorMessage = snapshot.errorMessage
-    }
-
-    private func publishNowPlaying(snapshot: NowPlayingSnapshot?) {
-        guard MyRadios.indices.contains(selectedStationIndex) else { return }
-
-        let radio = MyRadios[selectedStationIndex]
-        let currentTitle = snapshot?.title ?? nowPlayingTitle
-        let currentSubtitle = snapshot?.subtitle ?? nowPlayingSubtitle
-        let currentArtworkURL = snapshot?.artworkURL ?? nowPlayingArtworkURL
-
-        systemNowPlaying.update(
-            stationName: radio.name,
-            title: currentTitle,
-            subtitle: currentSubtitle,
-            artworkURL: currentArtworkURL,
-            isPlaying: isPlaying
-        )
-    }
-}
-
-struct AirPlayRoutePickerView: NSViewRepresentable {
-    func makeNSView(context: Context) -> AVRoutePickerView {
-        let view = AVRoutePickerView()
-        view.isRoutePickerButtonBordered = false
-        view.setRoutePickerButtonColor(.white, for: .normal)
-        view.setRoutePickerButtonColor(.white, for: .active)
-        return view
-    }
-
-    func updateNSView(_ nsView: AVRoutePickerView, context: Context) {
     }
 }
 
