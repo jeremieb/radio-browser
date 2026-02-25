@@ -73,17 +73,21 @@ final class NowPlayingViewModel: ObservableObject {
 
         do {
             let (data, _) = try await URLSession.shared.data(from: endpoint)
-            let response = try JSONDecoder().decode(NTSNowPlayingResponse.self, from: data)
+            let decoder = JSONDecoder()
 
-            let channel = bestChannelMatch(in: response.results, for: radio)
-            let now = channel?.now
-            let details = now?.embeds?.details
+            if let ntsResponse = try? decoder.decode(NTSNowPlayingResponse.self, from: data) {
+                applyNTSNowPlaying(ntsResponse, radio: radio)
+                return
+            }
 
-            title = details?.name ?? now?.broadcastTitle ?? (radio.name ?? "Live")
-            subtitle = now?.broadcastTitle
-            artworkURL = details?.media?.pictureMedium ?? details?.media?.backgroundMedium
-            errorMessage = nil
-            publishUpdate()
+            if let worldwideResponse = try? decoder.decode(WorldwideNowPlayingResponse.self, from: data) {
+                applyWorldwideNowPlaying(worldwideResponse, radio: radio)
+                return
+            }
+
+            throw DecodingError.dataCorrupted(
+                .init(codingPath: [], debugDescription: "Unsupported now-playing response format")
+            )
         } catch {
             title = radio.name ?? "Live"
             subtitle = "Unable to fetch now playing"
@@ -91,6 +95,29 @@ final class NowPlayingViewModel: ObservableObject {
             errorMessage = error.localizedDescription
             publishUpdate()
         }
+    }
+
+    private func applyNTSNowPlaying(_ response: NTSNowPlayingResponse, radio: Radio) {
+        let channel = bestChannelMatch(in: response.results, for: radio)
+        let now = channel?.now
+        let details = now?.embeds?.details
+
+        title = details?.name ?? now?.broadcastTitle ?? (radio.name ?? "Live")
+        subtitle = now?.broadcastTitle
+        artworkURL = details?.media?.pictureMedium ?? details?.media?.backgroundMedium
+        errorMessage = nil
+        publishUpdate()
+    }
+
+    private func applyWorldwideNowPlaying(_ response: WorldwideNowPlayingResponse, radio: Radio) {
+        let content = response.result?.content
+        let metadata = response.result?.metadata
+
+        title = content?.title ?? metadata?.title ?? (radio.name ?? "Live")
+        subtitle = metadata?.artist ?? metadata?.title ?? response.result?.status
+        artworkURL = nil
+        errorMessage = nil
+        publishUpdate()
     }
 
     private func publishUpdate() {

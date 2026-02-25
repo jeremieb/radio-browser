@@ -131,6 +131,33 @@ struct NTSLink: Decodable {
     let type: String?
 }
 
+struct WorldwideNowPlayingResponse: Decodable {
+    let success: Bool?
+    let result: WorldwideNowPlayingResult?
+}
+
+struct WorldwideNowPlayingResult: Decodable {
+    let status: String?
+    let content: WorldwideNowPlayingContent?
+    let metadata: WorldwideNowPlayingMetadata?
+}
+
+struct WorldwideNowPlayingContent: Decodable {
+    let title: String?
+    let color: String?
+    let media: WorldwideNowPlayingMedia?
+}
+
+struct WorldwideNowPlayingMetadata: Decodable {
+    let title: String?
+    let artist: String?
+    let album: String?
+}
+
+struct WorldwideNowPlayingMedia: Decodable {
+    let type: String?
+}
+
 private struct DynamicCodingKey: CodingKey {
     let stringValue: String
     let intValue: Int?
@@ -151,7 +178,7 @@ let MyRadios: [Radio] = [
         name: "NTS 1",
         streamURL: URL(string: "https://stream-relay-geo.ntslive.net/stream")!,
         nowPlayingAPI: URL(string: "https://www.nts.live/api/v2/live")!,
-        image: "NTS",
+        image: "nts-radio",
         description: "NTS Radio (also known as NTS Live or simply NTS) is a music radio platform which was founded in 2011 in Hackney, East London by Femi Adeyemi \"for an international community of music lovers\" The platform prioritizes showcasing niche artists in its radio programming and live events. NTS Radio's tagline is \"Don't Assume\".",
         disable: false
     ),
@@ -159,8 +186,16 @@ let MyRadios: [Radio] = [
         name: "NTS 2",
         streamURL: URL(string: "https://stream-relay-geo.ntslive.net/stream2")!,
         nowPlayingAPI: URL(string: "https://www.nts.live/api/v2/live")!,
-        image: "NTS",
+        image: "nts-radio",
         description: "NTS Radio (also known as NTS Live or simply NTS) is a music radio platform which was founded in 2011 in Hackney, East London by Femi Adeyemi \"for an international community of music lovers\" The platform prioritizes showcasing niche artists in its radio programming and live events. NTS Radio's tagline is \"Don't Assume\".",
+        disable: false
+    ),
+    Radio(
+        name: "Worldwide FM",
+        streamURL: URL(string: "https://worldwide-fm.radiocult.fm/stream")!,
+        nowPlayingAPI: URL(string: "https://api.radiocult.fm/api/station/worldwide-fm/schedule/live")!,
+        image: "worldwide-fm-radio",
+        description: "Worldwide FM curates and champions underground music, stories and culture from around the world.",
         disable: false
     )
 ]
