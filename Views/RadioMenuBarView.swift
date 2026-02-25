@@ -5,11 +5,14 @@ import CoreImage.CIFilterBuiltins
 import AppKit
 
 struct RadioMenuBarView: View {
+    
     @StateObject private var player = RadioPlayerViewModel()
     @State private var coverTint: Color = Color(red: 0.42, green: 0.58, blue: 0.86)
     @Environment(ShazamService.self) private var shazam
     @Environment(\.openWindow) private var openWindow
     @State private var shazamPulse = false
+    @State private var vinylRotation: Double = 0
+    @State private var vinylAnimationTask: Task<Void, Never>?
     
     let analytics = Analytics.shared
 
@@ -34,11 +37,22 @@ struct RadioMenuBarView: View {
                     shazamStatusFooter(message: message)
                 }
             }
-            .frame(maxWidth: 420, maxHeight: 420, alignment: .topLeading)
+            .frame(maxWidth: 460, maxHeight: 460, alignment: .topLeading)
             .padding(16)
         }
         .task(id: player.nowPlayingArtworkURL) {
             await refreshCoverTint()
+        }
+        .onChange(of: player.isPlaying) { _, isPlaying in
+            vinylAnimationTask?.cancel()
+            if isPlaying {
+                vinylAnimationTask = Task {
+                    while !Task.isCancelled {
+                        try? await Task.sleep(nanoseconds: 16_000_000) // ~60 fps
+                        vinylRotation += 0.6
+                    }
+                }
+            }
         }
         .onChange(of: shazam.state) { _, newState in
             switch newState {
@@ -85,7 +99,7 @@ struct RadioMenuBarView: View {
                 )
             }
         }
-        .frame(maxWidth: 420, maxHeight: 420)
+        .frame(maxWidth: 460, maxHeight: 460)
         .background(.ultraThinMaterial)
     }
 
@@ -144,31 +158,30 @@ struct RadioMenuBarView: View {
                     }
                 }
                 .frame(width: 210, height: 210)
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                )
+                .clipShape(Circle())
+                .overlay(Circle().stroke(Color.white.opacity(0.3), lineWidth: 1))
                 .shadow(color: .black.opacity(0.3), radius: 14, y: 8)
+                .rotationEffect(.degrees(vinylRotation))
             }
 
 
             VStack(alignment: .leading, spacing: 8) {
-                Text(player.nowPlayingTitle)
-                    .font(.body).fontWidth(.expanded).fontWeight(.bold)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.7)
-                    .foregroundStyle(.white)
-                    .shadow(color: .black.opacity(0.65), radius: 8, x: 0, y: 3)
-
-                if let subtitle = player.nowPlayingSubtitle {
-                    Text(subtitle)
-                        .font(.footnote).fontWeight(.medium)
+                VStack(alignment: .leading) {
+                    Text(player.nowPlayingTitle)
+                        .font(.body).fontWidth(.expanded).fontWeight(.bold)
                         .lineLimit(2)
+                        .minimumScaleFactor(0.7)
                         .foregroundStyle(.white)
                         .shadow(color: .black.opacity(0.65), radius: 8, x: 0, y: 3)
-                }
-
+                    
+                    if let subtitle = player.nowPlayingSubtitle {
+                        Text(subtitle)
+                            .font(.footnote).fontWeight(.medium)
+                            .lineLimit(2)
+                            .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.65), radius: 8, x: 0, y: 3)
+                    }
+                }.padding(.top, 46)
                 Spacer(minLength: 0)
 
                 HStack(spacing: 22) {
@@ -190,7 +203,7 @@ struct RadioMenuBarView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-        }.frame(maxWidth: 420, maxHeight: 420, alignment: .bottom)
+        }.frame(maxWidth: 460, maxHeight: 460, alignment: .bottom)
     }
 
     @ViewBuilder
@@ -238,7 +251,7 @@ struct RadioMenuBarView: View {
             } else {
                 shazam.startListening()
             }
-            analytics.sendSignal(signal: "shazam", parameters: nilx)
+            analytics.sendSignal(signal: "shazam", parameters: nil)
         } label: {
             Image(systemName: "shazam.logo.fill")
                 .font(.system(size: 28, weight: .semibold))
@@ -274,7 +287,7 @@ struct RadioMenuBarView: View {
     }
 
     private var artworkFallback: some View {
-        RoundedRectangle(cornerRadius: 20, style: .continuous)
+        Circle()
             .fill(Color.white.opacity(0.22))
             .overlay {
                 Image(systemName: "music.note")
