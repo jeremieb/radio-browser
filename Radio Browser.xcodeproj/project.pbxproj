@@ -55,6 +55,11 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Components/AirPlayRoutePickerView.swift,
+				Components/AnimatedBlobBackground.swift,
+				Components/MenuBarHeaderView.swift,
+				Components/NowPlayingView.swift,
+				Components/ShazamStatusFooterView.swift,
+				Components/StationStripView.swift,
 				RadioMenuBarView.swift,
 				ShazamResultView.swift,
 			);
