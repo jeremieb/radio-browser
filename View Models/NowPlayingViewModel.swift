@@ -114,8 +114,8 @@ final class NowPlayingViewModel: ObservableObject {
         let now = channel?.now
         let details = now?.embeds?.details
 
-        title = details?.name ?? now?.broadcastTitle ?? (radio.name ?? "Live")
-        subtitle = now?.broadcastTitle
+        title = details?.name ?? now?.broadcastTitle?.htmlDecoded ?? (radio.name ?? "Live")
+        subtitle = details?.name != nil ? now?.broadcastTitle?.htmlDecoded : nil
         artworkURL = details?.media?.pictureMedium ?? details?.media?.backgroundMedium
         errorMessage = nil
         publishUpdate()

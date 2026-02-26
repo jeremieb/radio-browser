@@ -17,13 +17,11 @@ struct Radio_BrowserApp: App {
         TelemetryDeck.initialize(config: config)
     }
     
-#if os(macOS)
     @State private var shazam = ShazamService()
-#endif
 
     var body: some Scene {
 #if os(macOS)
-        MenuBarExtra("Radio Browser", image: "my.radio.small") {
+        MenuBarExtra("Radio Browser", image: "my.radio.wave") {
             RadioMenuBarView()
                 .environment(shazam)
         }
@@ -38,6 +36,7 @@ struct Radio_BrowserApp: App {
 #else
         WindowGroup {
             ContentView()
+                .environment(shazam)
         }
 #endif
     }

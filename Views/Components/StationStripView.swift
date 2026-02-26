@@ -1,15 +1,11 @@
-#if os(macOS)
 import SwiftUI
-import AppKit
 
 struct StationStripView: View {
     @ObservedObject var player: RadioPlayerViewModel
     let analytics: Analytics
 
-    // Card dimensions
     private let cardSize: CGFloat = 58
     private let cardSpacing: CGFloat = 16
-    // How much of the next card peeks from the right edge
     private let peekAmount: CGFloat = 20
 
     var body: some View {
@@ -17,8 +13,6 @@ struct StationStripView: View {
             HStack(spacing: cardSpacing) {
                 ForEach(Array(MyRadios.enumerated()), id: \.offset) { index, radio in
                     stationCard(for: radio, index: index)
-                        // Each card is exactly cardSize wide; the HStack + safeAreaPadding
-                        // below control how many are visible and how much peeks.
                         .frame(width: cardSize, height: cardSize)
                 }
             }
@@ -26,8 +20,6 @@ struct StationStripView: View {
             .frame(minHeight: 80)
             .padding(.vertical, 2)
         }
-        // Mirror the parent VStack's 16 pt content padding on the leading edge,
-        // and leave a trailing gap so the next card peeks.
         .safeAreaPadding(.leading, 16)
         .safeAreaPadding(.trailing, peekAmount)
         .scrollTargetBehavior(.viewAligned(limitBehavior: .alwaysByOne))
@@ -63,7 +55,7 @@ struct StationStripView: View {
 
     @ViewBuilder
     private func stationThumbnail(for radio: Radio) -> some View {
-        if let imageName = radio.image, !imageName.isEmpty, NSImage(named: imageName) != nil {
+        if let imageName = radio.image, !imageName.isEmpty {
             Image(imageName)
                 .resizable()
                 .scaledToFill()
@@ -73,4 +65,3 @@ struct StationStripView: View {
         }
     }
 }
-#endif

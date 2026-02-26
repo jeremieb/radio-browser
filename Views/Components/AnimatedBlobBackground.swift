@@ -1,8 +1,6 @@
-#if os(macOS)
 import SwiftUI
 import CoreImage
 import CoreImage.CIFilterBuiltins
-import AppKit
 
 // MARK: - Blob configuration
 
@@ -11,8 +9,8 @@ struct BlobConfig {
     let phaseY: Double
     let speedX: Double
     let speedY: Double
-    let relativeSize: CGFloat   // fraction of the view's shorter dimension
-    let colorIndex: Int         // which palette color to use
+    let relativeSize: CGFloat
+    let colorIndex: Int
 }
 
 let blobConfigs: [BlobConfig] = [
@@ -27,22 +25,19 @@ let blobConfigs: [BlobConfig] = [
 
 struct AnimatedBlobBackground: View {
     let palette: [Color]
-    let time: Double            // seconds since some epoch, drives the animation
+    let time: Double
 
     var body: some View {
         GeometryReader { geo in
             let w = geo.size.width
             let h = geo.size.height
             ZStack {
-                // Dark base so blobs have something to glow against
                 Color.black.opacity(0.55)
 
                 ForEach(blobConfigs.indices, id: \.self) { i in
                     let cfg = blobConfigs[i]
                     let color = palette.isEmpty ? Color.blue : palette[cfg.colorIndex % palette.count]
                     let diameter = min(w, h) * cfg.relativeSize
-
-                    // Lissajous-like drift: keeps blobs within the view bounds
                     let cx = w * 0.5 + (w * 0.38) * sin(time * cfg.speedX + cfg.phaseX)
                     let cy = h * 0.5 + (h * 0.38) * cos(time * cfg.speedY + cfg.phaseY)
 
@@ -52,62 +47,77 @@ struct AnimatedBlobBackground: View {
                         .position(x: cx, y: cy)
                 }
             }
-            .blur(radius: 72)          // the heavy blur is what makes it look like Apple Music
+            .blur(radius: 72)
         }
         .clipped()
         .allowsHitTesting(false)
     }
 }
 
-// MARK: - NSImage palette extraction
+// MARK: - Cross-platform image palette extraction
+
+#if os(macOS)
+import AppKit
 
 extension NSImage {
-    var averageColor: NSColor? {
-        quadrantPalette.first
-    }
+    var averageColor: NSColor? { quadrantPalette.first }
 
-    /// Returns the average color of each image quadrant (TL, TR, BL, BR),
-    /// giving a natural 4-color palette that reflects the artwork's actual hues.
     var quadrantPalette: [NSColor] {
         guard let tiffData = tiffRepresentation,
-              let ciImage = CIImage(data: tiffData) else {
-            return []
+              let ciImage = CIImage(data: tiffData) else { return [] }
+        return ciImage.quadrantColors.map { r, g, b in
+            NSColor(calibratedRed: r, green: g, blue: b, alpha: 1)
         }
+    }
+}
+#else
+import UIKit
 
-        let context = CIContext(options: [.workingColorSpace: NSNull()])
-        let full = ciImage.extent
-        let hw = full.width / 2
-        let hh = full.height / 2
+extension UIImage {
+    var averageColor: UIColor? { quadrantPalette.first }
 
-        let quadrants: [CGRect] = [
-            CGRect(x: full.minX,      y: full.minY + hh, width: hw, height: hh), // top-left
-            CGRect(x: full.minX + hw, y: full.minY + hh, width: hw, height: hh), // top-right
-            CGRect(x: full.minX,      y: full.minY,       width: hw, height: hh), // bottom-left
-            CGRect(x: full.minX + hw, y: full.minY,       width: hw, height: hh), // bottom-right
-        ]
-
-        return quadrants.compactMap { rect -> NSColor? in
-            let filter = CIFilter.areaAverage()
-            filter.inputImage = ciImage
-            filter.extent = rect
-            guard let output = filter.outputImage else { return nil }
-
-            var pixel = [UInt8](repeating: 0, count: 4)
-            context.render(
-                output,
-                toBitmap: &pixel,
-                rowBytes: 4,
-                bounds: CGRect(x: 0, y: 0, width: 1, height: 1),
-                format: .RGBA8,
-                colorSpace: nil
-            )
-            return NSColor(
-                calibratedRed: CGFloat(pixel[0]) / 255.0,
-                green: CGFloat(pixel[1]) / 255.0,
-                blue: CGFloat(pixel[2]) / 255.0,
-                alpha: 1.0
-            )
+    var quadrantPalette: [UIColor] {
+        guard let cgImage = self.cgImage,
+              let ciImage = CIImage(image: self) else { return [] }
+        let _ = cgImage // silence unused warning
+        return ciImage.quadrantColors.map { r, g, b in
+            UIColor(red: r, green: g, blue: b, alpha: 1)
         }
     }
 }
 #endif
+
+// MARK: - Shared CIImage quadrant sampling
+
+private extension CIImage {
+    /// Returns (r, g, b) tuples for the average colour of each quadrant (TL, TR, BL, BR).
+    var quadrantColors: [(CGFloat, CGFloat, CGFloat)] {
+        let context = CIContext(options: [.workingColorSpace: NSNull()])
+        let full = extent
+        let hw = full.width / 2
+        let hh = full.height / 2
+
+        let quadrants: [CGRect] = [
+            CGRect(x: full.minX,      y: full.minY + hh, width: hw, height: hh),
+            CGRect(x: full.minX + hw, y: full.minY + hh, width: hw, height: hh),
+            CGRect(x: full.minX,      y: full.minY,       width: hw, height: hh),
+            CGRect(x: full.minX + hw, y: full.minY,       width: hw, height: hh),
+        ]
+
+        return quadrants.compactMap { rect in
+            let filter = CIFilter.areaAverage()
+            filter.inputImage = self
+            filter.extent = rect
+            guard let output = filter.outputImage else { return nil }
+
+            var pixel = [UInt8](repeating: 0, count: 4)
+            context.render(output,
+                           toBitmap: &pixel,
+                           rowBytes: 4,
+                           bounds: CGRect(x: 0, y: 0, width: 1, height: 1),
+                           format: .RGBA8,
+                           colorSpace: nil)
+            return (CGFloat(pixel[0]) / 255, CGFloat(pixel[1]) / 255, CGFloat(pixel[2]) / 255)
+        }
+    }
+}

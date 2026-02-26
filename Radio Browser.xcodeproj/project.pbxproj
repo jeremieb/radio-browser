@@ -60,6 +60,7 @@
 				Components/AnimatedBlobBackground.swift,
 				Components/MenuBarHeaderView.swift,
 				Components/NowPlayingView.swift,
+				Components/ShazamButtonView.swift,
 				Components/ShazamStatusFooterView.swift,
 				Components/StationStripView.swift,
 				RadioMenuBarView.swift,

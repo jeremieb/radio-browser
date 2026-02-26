@@ -1,4 +1,3 @@
-#if os(macOS)
 import AVFoundation
 
 @MainActor
@@ -142,4 +141,3 @@ final class RadioPlayerViewModel: ObservableObject {
         )
     }
 }
-#endif

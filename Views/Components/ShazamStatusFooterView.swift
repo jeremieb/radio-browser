@@ -1,4 +1,3 @@
-#if os(macOS)
 import SwiftUI
 
 struct ShazamStatusFooterView: View {
@@ -26,4 +25,3 @@ struct ShazamStatusFooterView: View {
         .transition(.opacity.combined(with: .move(edge: .bottom)))
     }
 }
-#endif

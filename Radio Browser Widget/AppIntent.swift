@@ -6,17 +6,12 @@
 //
 
 import AppIntents
-import AppKit
 
 struct OpenRadioBrowserIntent: AppIntent {
     static var title: LocalizedStringResource = "Open Radio Browser"
-    static var openAppWhenRun: Bool = false
+    static var openAppWhenRun: Bool = true
 
     func perform() async throws -> some IntentResult {
-        guard let url = URL(string: "radio-browser://open") else { return .result() }
-        await MainActor.run {
-            _ = NSWorkspace.shared.open(url)
-        }
         return .result()
     }
 }

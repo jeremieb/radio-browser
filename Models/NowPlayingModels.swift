@@ -179,6 +179,20 @@ struct FIPStep: Decodable {
 
 // MARK: - Helpers
 
+extension String {
+    /// Decodes HTML entities (e.g. `&amp;` → `&`, `&#039;` → `'`).
+    var htmlDecoded: String {
+        guard let data = data(using: .utf8),
+              let attributed = try? NSAttributedString(
+                data: data,
+                options: [.documentType: NSAttributedString.DocumentType.html,
+                          .characterEncoding: String.Encoding.utf8.rawValue],
+                documentAttributes: nil)
+        else { return self }
+        return attributed.string
+    }
+}
+
 private struct DynamicCodingKey: CodingKey {
     let stringValue: String
     let intValue: Int?

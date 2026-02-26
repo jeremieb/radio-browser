@@ -1,6 +1,4 @@
-#if os(macOS)
 import SwiftUI
-import AppKit
 
 struct ShazamResultView: View {
     let result: ShazamResult
@@ -57,7 +55,11 @@ struct ShazamResultView: View {
             // Apple Music button
             if let appleMusicURL = result.appleMusicURL {
                 Button {
+#if os(macOS)
                     NSWorkspace.shared.open(appleMusicURL)
+#else
+                    UIApplication.shared.open(appleMusicURL)
+#endif
                 } label: {
                     Label("Open in Apple Music", systemImage: "music.note")
                         .font(.body.weight(.semibold))
@@ -77,7 +79,11 @@ struct ShazamResultView: View {
             .padding(.top, 8)
             .padding(.bottom, 20)
         }
+        #if macOS
         .frame(width: 340)
+        #else
+        .padding()
+        #endif
     }
 }
 
@@ -92,4 +98,3 @@ struct ShazamResultView: View {
         )
     )
 }
-#endif
