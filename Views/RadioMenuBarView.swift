@@ -4,15 +4,76 @@ import CoreImage
 import CoreImage.CIFilterBuiltins
 import AppKit
 
+// MARK: - Animated blob background (Apple Music–style)
+
+private struct BlobConfig {
+    let phaseX: Double
+    let phaseY: Double
+    let speedX: Double
+    let speedY: Double
+    let relativeSize: CGFloat   // fraction of the view's shorter dimension
+    let colorIndex: Int         // which palette color to use
+}
+
+private let blobConfigs: [BlobConfig] = [
+    BlobConfig(phaseX: 0.0,  phaseY: 0.0,  speedX: 0.37, speedY: 0.29, relativeSize: 0.85, colorIndex: 0),
+    BlobConfig(phaseX: 1.2,  phaseY: 2.1,  speedX: 0.23, speedY: 0.41, relativeSize: 0.75, colorIndex: 1),
+    BlobConfig(phaseX: 3.5,  phaseY: 0.7,  speedX: 0.51, speedY: 0.19, relativeSize: 0.70, colorIndex: 2),
+    BlobConfig(phaseX: 0.9,  phaseY: 3.3,  speedX: 0.17, speedY: 0.53, relativeSize: 0.65, colorIndex: 3),
+    BlobConfig(phaseX: 2.3,  phaseY: 1.5,  speedX: 0.43, speedY: 0.31, relativeSize: 0.60, colorIndex: 0),
+]
+
+private struct AnimatedBlobBackground: View {
+    let palette: [Color]
+    let time: Double            // seconds since some epoch, drives the animation
+
+    var body: some View {
+        GeometryReader { geo in
+            let w = geo.size.width
+            let h = geo.size.height
+            ZStack {
+                // Dark base so blobs have something to glow against
+                Color.black.opacity(0.55)
+
+                ForEach(blobConfigs.indices, id: \.self) { i in
+                    let cfg = blobConfigs[i]
+                    let color = palette.isEmpty ? Color.blue : palette[cfg.colorIndex % palette.count]
+                    let diameter = min(w, h) * cfg.relativeSize
+
+                    // Lissajous-like drift: keeps blobs within the view bounds
+                    let cx = w * 0.5 + (w * 0.38) * sin(time * cfg.speedX + cfg.phaseX)
+                    let cy = h * 0.5 + (h * 0.38) * cos(time * cfg.speedY + cfg.phaseY)
+
+                    Ellipse()
+                        .fill(color.opacity(0.82))
+                        .frame(width: diameter, height: diameter * 0.8)
+                        .position(x: cx, y: cy)
+                }
+            }
+            .blur(radius: 72)          // the heavy blur is what makes it look like Apple Music
+        }
+        .clipped()
+        .allowsHitTesting(false)
+    }
+}
+
 struct RadioMenuBarView: View {
     
     @StateObject private var player = RadioPlayerViewModel()
     @State private var coverTint: Color = Color(red: 0.42, green: 0.58, blue: 0.86)
+    @State private var blobPalette: [Color] = [
+        Color(red: 0.42, green: 0.58, blue: 0.86),
+        Color(red: 0.25, green: 0.42, blue: 0.78),
+        Color(red: 0.55, green: 0.32, blue: 0.82),
+        Color(red: 0.30, green: 0.60, blue: 0.90),
+    ]
     @Environment(ShazamService.self) private var shazam
     @Environment(\.openWindow) private var openWindow
     @State private var shazamPulse = false
     @State private var vinylRotation: Double = 0
     @State private var vinylAnimationTask: Task<Void, Never>?
+    @State private var isVisible = false
+    private let animationStartDate = Date()
     
     let analytics = Analytics.shared
 
@@ -40,6 +101,8 @@ struct RadioMenuBarView: View {
             .frame(maxWidth: 460, maxHeight: 460, alignment: .topLeading)
             .padding(16)
         }
+        .onAppear { isVisible = true }
+        .onDisappear { isVisible = false }
         .task(id: player.nowPlayingArtworkURL) {
             await refreshCoverTint()
         }
@@ -71,36 +134,19 @@ struct RadioMenuBarView: View {
 
     private var backgroundLayer: some View {
         ZStack {
-            if isExpandedPlayer {
-                LinearGradient(
-                    colors: [coverTint.opacity(0.78), coverTint.opacity(0.22), .clear],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            }
+            // Static material base — visible when not playing
+            Color.clear.background(.ultraThinMaterial)
 
-            if let artworkURL = player.nowPlayingArtworkURL, isExpandedPlayer {
-                AsyncImage(url: artworkURL) { phase in
-                    if case .success(let image) = phase {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .opacity(0.42)
-                            .blur(radius: 2)
-                    }
+            if isExpandedPlayer {
+                TimelineView(.animation(paused: !player.isPlaying || !isVisible)) { context in
+                    let elapsed = context.date.timeIntervalSince(animationStartDate)
+                    AnimatedBlobBackground(palette: blobPalette, time: elapsed)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .mask(
-                    LinearGradient(
-                        colors: [.clear, .black.opacity(0.25), .black.opacity(0.7)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
+                .transition(.opacity)
             }
         }
         .frame(maxWidth: 460, maxHeight: 460)
-        .background(.ultraThinMaterial)
+        .animation(.easeInOut(duration: 0.8), value: isExpandedPlayer)
     }
 
     private var header: some View {
@@ -314,59 +360,83 @@ struct RadioMenuBarView: View {
 
     private func refreshCoverTint() async {
         guard let artworkURL = player.nowPlayingArtworkURL else {
-            coverTint = Color(red: 0.42, green: 0.58, blue: 0.86)
+            let defaultPalette: [Color] = [
+                Color(red: 0.42, green: 0.58, blue: 0.86),
+                Color(red: 0.25, green: 0.42, blue: 0.78),
+                Color(red: 0.55, green: 0.32, blue: 0.82),
+                Color(red: 0.30, green: 0.60, blue: 0.90),
+            ]
+            await MainActor.run {
+                coverTint = defaultPalette[0]
+                blobPalette = defaultPalette
+            }
             return
         }
 
         do {
             let (data, _) = try await URLSession.shared.data(from: artworkURL)
-            guard let image = NSImage(data: data),
-                  let average = image.averageColor else {
-                return
-            }
+            guard let image = NSImage(data: data) else { return }
 
+            let palette = image.quadrantPalette
             await MainActor.run {
-                coverTint = Color(nsColor: average)
+                if let first = palette.first.map({ Color(nsColor: $0) }) {
+                    coverTint = first
+                }
+                blobPalette = palette.map { Color(nsColor: $0) }
             }
         } catch {
-            // Keep the existing tint when color extraction fails.
+            // Keep the existing palette when color extraction fails.
         }
     }
 }
 
 private extension NSImage {
     var averageColor: NSColor? {
+        quadrantPalette.first
+    }
+
+    /// Returns the average color of each image quadrant (TL, TR, BL, BR),
+    /// giving a natural 4-color palette that reflects the artwork's actual hues.
+    var quadrantPalette: [NSColor] {
         guard let tiffData = tiffRepresentation,
               let ciImage = CIImage(data: tiffData) else {
-            return nil
-        }
-
-        let filter = CIFilter.areaAverage()
-        filter.inputImage = ciImage
-        filter.extent = ciImage.extent
-
-        guard let outputImage = filter.outputImage else {
-            return nil
+            return []
         }
 
         let context = CIContext(options: [.workingColorSpace: NSNull()])
-        var pixel = [UInt8](repeating: 0, count: 4)
+        let full = ciImage.extent
+        let hw = full.width / 2
+        let hh = full.height / 2
 
-        context.render(
-            outputImage,
-            toBitmap: &pixel,
-            rowBytes: 4,
-            bounds: CGRect(x: 0, y: 0, width: 1, height: 1),
-            format: .RGBA8,
-            colorSpace: nil
-        )
+        let quadrants: [CGRect] = [
+            CGRect(x: full.minX,      y: full.minY + hh, width: hw, height: hh), // top-left
+            CGRect(x: full.minX + hw, y: full.minY + hh, width: hw, height: hh), // top-right
+            CGRect(x: full.minX,      y: full.minY,       width: hw, height: hh), // bottom-left
+            CGRect(x: full.minX + hw, y: full.minY,       width: hw, height: hh), // bottom-right
+        ]
 
-        return NSColor(
-            calibratedRed: CGFloat(pixel[0]) / 255.0,
-            green: CGFloat(pixel[1]) / 255.0,
-            blue: CGFloat(pixel[2]) / 255.0,
-            alpha: 1.0
-        )
+        return quadrants.compactMap { rect -> NSColor? in
+            let filter = CIFilter.areaAverage()
+            filter.inputImage = ciImage
+            filter.extent = rect
+            guard let output = filter.outputImage else { return nil }
+
+            var pixel = [UInt8](repeating: 0, count: 4)
+            context.render(
+                output,
+                toBitmap: &pixel,
+                rowBytes: 4,
+                bounds: CGRect(x: 0, y: 0, width: 1, height: 1),
+                format: .RGBA8,
+                colorSpace: nil
+            )
+            return NSColor(
+                calibratedRed: CGFloat(pixel[0]) / 255.0,
+                green: CGFloat(pixel[1]) / 255.0,
+                blue: CGFloat(pixel[2]) / 255.0,
+                alpha: 1.0
+            )
+        }
     }
 }
 
