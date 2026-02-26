@@ -49,6 +49,7 @@ struct RadioMenuBarView: View {
                     ShazamStatusFooterView(message: message)
                 }
             }
+            .frame(minWidth: 340, minHeight: 340, alignment: .topLeading)
             .frame(maxWidth: 460, maxHeight: 460, alignment: .topLeading)
             .padding(.vertical)
         }
