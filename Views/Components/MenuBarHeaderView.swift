@@ -25,7 +25,7 @@ struct MenuBarHeaderView: View {
             }
             .buttonStyle(.plain)
             .help("Quit Radio Browser")
-        }
+        }.padding(.horizontal)
     }
 }
 #endif

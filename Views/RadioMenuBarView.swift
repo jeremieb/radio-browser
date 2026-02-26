@@ -50,7 +50,7 @@ struct RadioMenuBarView: View {
                 }
             }
             .frame(maxWidth: 460, maxHeight: 460, alignment: .topLeading)
-            .padding(16)
+            .padding(.vertical)
         }
         .onAppear { isVisible = true }
         .onDisappear { isVisible = false }

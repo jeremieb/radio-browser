@@ -58,7 +58,7 @@ struct NowPlayingView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .frame(maxWidth: 460, maxHeight: 460, alignment: .bottom)
+        .frame(maxWidth: 460, maxHeight: 460, alignment: .bottom).padding(.horizontal)
     }
 
     // MARK: - Vinyl disc
