@@ -10,6 +10,7 @@
 		022932502F4F107300976C81 /* SystemNowPlayingCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0229324C2F4F0FFA00976C81 /* SystemNowPlayingCenter.swift */; };
 		022932542F4F120000976C81 /* ShazamService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022932532F4F120000976C81 /* ShazamService.swift */; };
 		02BE4C8B2F4F1C1E00FC1D41 /* TelemetryDeck in Frameworks */ = {isa = PBXBuildFile; productRef = 02BE4C8A2F4F1C1E00FC1D41 /* TelemetryDeck */; };
+		02C28F1C2F50C48700E9E0F4 /* ICYMetadataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C28F1B2F50C48700E9E0F4 /* ICYMetadataService.swift */; };
 		02E746C32F4EE92300CE6A43 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 02E746C22F4EE92300CE6A43 /* AppIcon.icon */; };
 		02E78A892F4F2BF400B03989 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02E78A882F4F2BF400B03989 /* WidgetKit.framework */; };
 		02E78A8B2F4F2BF400B03989 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02E78A8A2F4F2BF400B03989 /* SwiftUI.framework */; };
@@ -43,6 +44,7 @@
 /* Begin PBXFileReference section */
 		0229324C2F4F0FFA00976C81 /* SystemNowPlayingCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemNowPlayingCenter.swift; sourceTree = "<group>"; };
 		022932532F4F120000976C81 /* ShazamService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShazamService.swift; sourceTree = "<group>"; };
+		02C28F1B2F50C48700E9E0F4 /* ICYMetadataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICYMetadataService.swift; sourceTree = "<group>"; };
 		02E746C22F4EE92300CE6A43 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		02E78A862F4F2BF400B03989 /* Radio Browser WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Radio Browser WidgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		02E78A882F4F2BF400B03989 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = /System/Library/Frameworks/WidgetKit.framework; sourceTree = "<absolute>"; };
@@ -142,6 +144,7 @@
 			children = (
 				0229324C2F4F0FFA00976C81 /* SystemNowPlayingCenter.swift */,
 				022932532F4F120000976C81 /* ShazamService.swift */,
+				02C28F1B2F50C48700E9E0F4 /* ICYMetadataService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -293,6 +296,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02C28F1C2F50C48700E9E0F4 /* ICYMetadataService.swift in Sources */,
 				022932502F4F107300976C81 /* SystemNowPlayingCenter.swift in Sources */,
 				022932542F4F120000976C81 /* ShazamService.swift in Sources */,
 			);

@@ -14,6 +14,20 @@ final class NowPlayingViewModel: ObservableObject {
     func startUpdating(for radio: Radio) {
         stopUpdating(resetState: false)
 
+        if let icyURL = radio.icyStreamURL {
+            // ICY in-stream metadata: open the stream, grab the title, repeat.
+            updateTask = Task {
+                await refreshICY(url: icyURL, radio: radio)
+                while !Task.isCancelled {
+                    // Wait a bit before re-connecting to detect track changes.
+                    try? await Task.sleep(nanoseconds: 15_000_000_000) // 15 s
+                    guard !Task.isCancelled else { break }
+                    await refreshICY(url: icyURL, radio: radio)
+                }
+            }
+            return
+        }
+
         guard radio.nowPlayingAPI != nil else {
             title = radio.name ?? "Live"
             subtitle = "No now-playing endpoint"
@@ -133,6 +147,28 @@ final class NowPlayingViewModel: ObservableObject {
         subtitle = artist
         artworkURL = step?.visual
         errorMessage = nil
+        publishUpdate()
+    }
+
+    private func refreshICY(url: URL, radio: Radio) async {
+        do {
+            let streamTitle = try await ICYMetadataService.fetchTitle(from: url)
+            // StreamTitle is often "Artist - Title" — split on the first " - ".
+            if let separatorRange = streamTitle.range(of: " - ") {
+                title = String(streamTitle[separatorRange.upperBound...])
+                subtitle = String(streamTitle[..<separatorRange.lowerBound])
+            } else {
+                title = streamTitle
+                subtitle = radio.name
+            }
+            artworkURL = nil
+            errorMessage = nil
+        } catch {
+            title = radio.name ?? "Live"
+            subtitle = nil
+            artworkURL = nil
+            errorMessage = nil
+        }
         publishUpdate()
     }
 

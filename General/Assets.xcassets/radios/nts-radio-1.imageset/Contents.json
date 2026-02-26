@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "nts-radio.png",
+      "filename" : "nts-radio-1.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "nts-radio@2x.png",
+      "filename" : "nts-radio-1@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "nts-radio@3x.png",
+      "filename" : "nts-radio-1@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
