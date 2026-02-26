@@ -17,9 +17,10 @@ final class SystemNowPlayingCenter {
     private var remoteCommandsConfigured = false
 
     func configureRemoteCommands(
-        onPlay: @escaping () -> MPRemoteCommandHandlerStatus,
-        onPause: @escaping () -> MPRemoteCommandHandlerStatus,
-        onStop: @escaping () -> MPRemoteCommandHandlerStatus
+        onPlay: @escaping @Sendable () -> MPRemoteCommandHandlerStatus,
+        onPause: @escaping @Sendable () -> MPRemoteCommandHandlerStatus,
+        onStop: @escaping @Sendable () -> MPRemoteCommandHandlerStatus,
+        onToggle: @escaping @Sendable () -> MPRemoteCommandHandlerStatus
     ) {
         guard !remoteCommandsConfigured else { return }
         remoteCommandsConfigured = true
@@ -28,10 +29,27 @@ final class SystemNowPlayingCenter {
         commandCenter.playCommand.isEnabled = true
         commandCenter.pauseCommand.isEnabled = true
         commandCenter.stopCommand.isEnabled = true
+        commandCenter.togglePlayPauseCommand.isEnabled = true
 
-        commandCenter.playCommand.addTarget { _ in onPlay() }
-        commandCenter.pauseCommand.addTarget { _ in onPause() }
-        commandCenter.stopCommand.addTarget { _ in onStop() }
+        // MPRemoteCommandCenter delivers callbacks on its own internal queue,
+        // so we must hop to the main actor before touching any app state.
+        commandCenter.playCommand.addTarget { _ in
+            DispatchQueue.main.async { _ = onPlay() }
+            return .success
+        }
+        commandCenter.pauseCommand.addTarget { _ in
+            DispatchQueue.main.async { _ = onPause() }
+            return .success
+        }
+        commandCenter.stopCommand.addTarget { _ in
+            DispatchQueue.main.async { _ = onStop() }
+            return .success
+        }
+        // The space bar and media play/pause key both send togglePlayPauseCommand.
+        commandCenter.togglePlayPauseCommand.addTarget { _ in
+            DispatchQueue.main.async { _ = onToggle() }
+            return .success
+        }
     }
 
     func update(
@@ -56,6 +74,15 @@ final class SystemNowPlayingCenter {
         updateArtwork(from: artworkURL)
     }
 
+    /// Marks playback as paused while keeping Now Playing metadata visible to the system.
+    /// This keeps the app eligible to receive remote commands while paused.
+    func markPaused() {
+        infoCenter.playbackState = .paused
+        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0.0
+        infoCenter.nowPlayingInfo = nowPlayingInfo
+    }
+
+    /// Fully removes the app from the Now Playing list (call only on stop/teardown).
     func clear() {
         artworkTask?.cancel()
         artworkTask = nil

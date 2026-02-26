@@ -23,15 +23,19 @@ final class RadioPlayerViewModel: ObservableObject {
 
         systemNowPlaying.configureRemoteCommands(
             onPlay: { [weak self] in
-                self?.resumeOrPlaySelectedStation()
+                Task { @MainActor [weak self] in self?.resumeOrPlaySelectedStation() }
                 return .success
             },
             onPause: { [weak self] in
-                self?.pause()
+                Task { @MainActor [weak self] in self?.pause() }
                 return .success
             },
             onStop: { [weak self] in
-                self?.stop()
+                Task { @MainActor [weak self] in self?.stop() }
+                return .success
+            },
+            onToggle: { [weak self] in
+                Task { @MainActor [weak self] in self?.togglePlayback() }
                 return .success
             }
         )
@@ -79,7 +83,7 @@ final class RadioPlayerViewModel: ObservableObject {
         guard let player else { return }
         player.pause()
         isPlaying = false
-        publishNowPlaying(snapshot: nil)
+        systemNowPlaying.markPaused()
     }
 
     func stop() {

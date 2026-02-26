@@ -35,6 +35,8 @@
 	</array>
 	<key>LSUIElement</key>
 	<true/>
+	<key>NSSupportsAudioPlayerMode</key>
+	<true/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Radio Browser uses the microphone to identify songs playing around you via Shazam.</string>
 	<key>LSRequiresIPhoneOS</key>
