@@ -77,6 +77,7 @@ struct RadioMenuBarView: View {
             case .matched:
                 withAnimation(.default) { shazamPulse = false }
                 openWindow(id: "shazam-result")
+                NSApp.activate(ignoringOtherApps: true)
             default:
                 withAnimation(.default) { shazamPulse = false }
             }
