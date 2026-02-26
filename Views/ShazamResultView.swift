@@ -70,7 +70,8 @@ struct ShazamResultView: View {
                 .tint(Color(red: 0.98, green: 0.22, blue: 0.39))
                 .padding(.horizontal, 24)
             }
-
+            
+            #if os(macOS)
             Button("Done") {
                 dismiss()
             }
@@ -78,8 +79,9 @@ struct ShazamResultView: View {
             .foregroundStyle(.secondary)
             .padding(.top, 8)
             .padding(.bottom, 20)
+            #endif
         }
-        #if macOS
+        #if os(macOS)
         .frame(width: 340)
         #else
         .padding()

@@ -61,8 +61,13 @@ struct ContentView: View {
         }
         .sheet(isPresented: $shazamResultSheet) {
             if case .matched(let result) = shazam.state {
-                ShazamResultView(result: result)
-                    .presentationDetents([.medium])
+                #if os(macOS)
+                    ShazamResultView(result: result)
+                        .presentationDetents([.medium])
+                #else
+                    ShazamResultView(result: result)
+                        .presentationDetents([.fraction(0.70)])
+                #endif
             }
         }
         .task(id: player.nowPlayingArtworkURL) {

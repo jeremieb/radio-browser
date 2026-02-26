@@ -46,22 +46,24 @@ struct NowPlayingView: View {
                     }
                 }.padding(.top).frame(maxWidth: .infinity, alignment: .leading)
                 Spacer()
-                HStack(spacing: 22) {
-                    Spacer()
+                VStack(alignment: .leading) {
                     ShazamButtonView(shazamPulse: shazamPulse, analytics: analytics)
-
-                    Button {
-                        player.togglePlayback()
-                    } label: {
-                        Image(systemName: player.isPlaying ? "pause.fill" : "play.fill")
-                            .font(.system(size: 34, weight: .heavy))
-                            .foregroundStyle(.white)
-                            .frame(width: 56, height: 56)
-                            .shadow(color: .black.opacity(0.3), radius: 8, y: 4)
-                    }.buttonStyle(.plain)
-                    Spacer()
                 }
+                .padding(.leading, 60).offset(y: -8)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }.frame(maxWidth: .infinity, alignment: .leading)
+            VStack {
+                Spacer()
+                Button {
+                    player.togglePlayback()
+                } label: {
+                    Image(systemName: player.isPlaying ? "pause.fill" : "play.fill")
+                        .font(.system(size: 34, weight: .heavy))
+                        .foregroundStyle(.white)
+                        .frame(width: 56, height: 56)
+                        .shadow(color: .black.opacity(0.3), radius: 8, y: 4)
+                }.buttonStyle(.plain)
+            }
         }.padding(.horizontal)
     }
     

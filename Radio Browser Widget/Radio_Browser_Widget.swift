@@ -18,7 +18,7 @@ struct RadioBrowserControl: ControlWidget {
                 Label {
                     Text("Radio Browser")
                 } icon: {
-                    Image("my.radio")
+                    Image("my.radio.wave")
                 }
             }
         }

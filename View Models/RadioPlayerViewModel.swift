@@ -2,6 +2,19 @@ import AVFoundation
 
 @MainActor
 final class RadioPlayerViewModel: ObservableObject {
+
+    private static let audioSessionConfigured: Bool = {
+        #if os(iOS)
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playback, mode: .default, options: [])
+            try session.setActive(true)
+        } catch {
+            // Audio session setup failed; playback may not continue in background.
+        }
+        #endif
+        return true
+    }()
     @Published var selectedStationIndex = 0
     @Published var isPlaying = false
     @Published var nowPlayingTitle = "Not playing"
@@ -15,6 +28,8 @@ final class RadioPlayerViewModel: ObservableObject {
     private let systemNowPlaying = SystemNowPlayingCenter()
 
     init() {
+        _ = Self.audioSessionConfigured
+
         nowPlaying.onUpdate = { [weak self] snapshot in
             self?.applyNowPlaying(snapshot)
             self?.publishNowPlaying(snapshot: snapshot)
