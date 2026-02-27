@@ -330,7 +330,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Radio Browser Widget/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Radio Browser Widget";
+				INFOPLIST_KEY_CFBundleDisplayName = "Broadcast Alternative Collective";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -377,7 +377,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Radio Browser Widget/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Radio Browser Widget";
+				INFOPLIST_KEY_CFBundleDisplayName = "Broadcast Alternative Collective";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -553,7 +553,7 @@
 				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				INFOPLIST_FILE = General/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Radio Browser";
+				INFOPLIST_KEY_CFBundleDisplayName = "Broadcast Alternative Collective";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -603,7 +603,7 @@
 				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				INFOPLIST_FILE = General/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Radio Browser";
+				INFOPLIST_KEY_CFBundleDisplayName = "Broadcast Alternative Collective";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
