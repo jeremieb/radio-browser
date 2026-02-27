@@ -22,13 +22,17 @@ struct NowPlayingView: View {
     private var PhoneLayout: some View {
         ZStack(alignment: .center) {
             vinylDisc
+            #if os(iOS)
                 .frame(width: 280, height: 280)
+            #else
+                .frame(width: 380, height: 380)
+            #endif
                 .clipShape(Circle())
                 .overlay(Circle().stroke(Color.white.opacity(0.3), lineWidth: 1))
                 .shadow(color: .black.opacity(0.3), radius: 14, y: 8)
                 .rotationEffect(.degrees(vinylRotation))
             VStack(alignment: .center, spacing: 8) {
-                
+                #if os(iOS)
                 VStack(alignment: .leading) {
                     Text(player.nowPlayingTitle)
                         .font(.body).fontWidth(.expanded).fontWeight(.bold)
@@ -46,7 +50,25 @@ struct NowPlayingView: View {
                             .shadow(color: .black.opacity(0.65), radius: 8, x: 0, y: 3)
                     }
                 }.padding(.top).frame(maxWidth: .infinity, alignment: .leading)
-                
+                #else
+                VStack(alignment: .center) {
+                    Text(player.nowPlayingTitle)
+                        .font(.body).fontWidth(.expanded).fontWeight(.bold)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.7)
+                        .foregroundStyle(.white)
+                        .shadow(color: .black.opacity(0.65), radius: 8, x: 0, y: 3)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    if let subtitle = player.nowPlayingSubtitle {
+                        Text(subtitle)
+                            .font(.footnote).fontWeight(.medium)
+                            .lineLimit(2)
+                            .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.65), radius: 8, x: 0, y: 3)
+                    }
+                }.frame(maxWidth: .infinity, alignment: .center)
+                #endif
+
                 Spacer()
                 
                 HStack(alignment: .center) {
@@ -160,6 +182,14 @@ struct NowPlayingView: View {
             Circle()
                 .fill(Color.white)
                 .frame(width: 4, height: 4)
+            #elseif os(tvOS)
+            Circle()
+                .fill(Color.black)
+                .stroke(Color.white, lineWidth: 1)
+                .frame(width: 120, height: 120)
+            Circle()
+                .fill(Color.white)
+                .frame(width: 10, height: 10)
             #else
             Circle()
                 .fill(Color.black)
