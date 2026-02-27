@@ -7,7 +7,12 @@ final class RadioPlayerViewModel: ObservableObject {
         #if os(iOS)
         do {
             let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.playback, mode: .default, options: [])
+            try session.setCategory(
+                .playback,
+                mode: .default,
+                policy: .longFormAudio,
+                options: []
+            )
             try session.setActive(true)
         } catch {
             // Audio session setup failed; playback may not continue in background.
