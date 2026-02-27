@@ -14,7 +14,7 @@
 		02E746C32F4EE92300CE6A43 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 02E746C22F4EE92300CE6A43 /* AppIcon.icon */; };
 		02E78A892F4F2BF400B03989 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02E78A882F4F2BF400B03989 /* WidgetKit.framework */; };
 		02E78A8B2F4F2BF400B03989 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02E78A8A2F4F2BF400B03989 /* SwiftUI.framework */; };
-		02E78A982F4F2BF500B03989 /* Radio Browser WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 02E78A862F4F2BF400B03989 /* Radio Browser WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		02E78A982F4F2BF500B03989 /* Radio Browser WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 02E78A862F4F2BF400B03989 /* Radio Browser WidgetExtension.appex */; platformFilters = (ios, macos, xros, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -309,6 +309,11 @@
 /* Begin PBXTargetDependency section */
 		02E78A972F4F2BF500B03989 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				macos,
+				xros,
+			);
 			target = 02E78A852F4F2BF400B03989 /* Radio Browser WidgetExtension */;
 			targetProxy = 02E78A962F4F2BF500B03989 /* PBXContainerItemProxy */;
 		};
@@ -567,12 +572,12 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2,3,7";
 				TVOS_DEPLOYMENT_TARGET = 26.0;
 				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 				XROS_DEPLOYMENT_TARGET = 26.0;
@@ -617,12 +622,12 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2,3,7";
 				TVOS_DEPLOYMENT_TARGET = 26.0;
 				VALIDATE_PRODUCT = YES;
 				WATCHOS_DEPLOYMENT_TARGET = 26.0;

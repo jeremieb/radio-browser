@@ -1,7 +1,7 @@
 import Foundation
 import MediaPlayer
 
-#if os(iOS)
+#if os(iOS) || os(tvOS)
 import UIKit
 private typealias PlatformImage = UIImage
 #elseif os(macOS)
