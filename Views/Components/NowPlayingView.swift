@@ -51,7 +51,9 @@ struct NowPlayingView: View {
                 
                 HStack(alignment: .center) {
                     VStack {
+                        #if !os(tvOS)
                         ShazamButtonView(shazamPulse: shazamPulse, analytics: analytics)
+                        #endif
                     }.frame(maxWidth: .infinity, alignment: .center)
                     VStack{
                         Button {
@@ -65,7 +67,9 @@ struct NowPlayingView: View {
                         }.buttonStyle(.plain)
                     }.frame(maxWidth: .infinity, alignment: .center)
                     VStack {
+                        #if !os(tvOS)
                         AirPlayRoutePickerView()
+                        #endif
                     }.frame(maxWidth: .infinity, alignment: .center)
                 }
                 
