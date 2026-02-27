@@ -12,7 +12,7 @@ struct CoverFlowStationView: View {
     private let maxRotation: Double = 55
     private let rotationFalloff: Double = 0.6
 
-    private var cardSize: CGFloat { player.isPlaying ? baseCardSize * 0.8 : baseCardSize }
+    private var cardSize: CGFloat { player.isPlaying ? baseCardSize * 0.6 : baseCardSize }
 
     // Drives both user-gesture snapping and programmatic scrolling.
     // scrollPosition(id:anchor:.center) ensures every settled position
@@ -170,7 +170,7 @@ struct CoverFlowStationView: View {
             )
 
             Text(radio.name ?? "")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.footnote).fontWeight(.semibold).fontWidth(.expanded)
                 .foregroundStyle(.white)
                 .lineLimit(1)
                 .padding(.horizontal, 10)

@@ -22,7 +22,7 @@ struct NowPlayingView: View {
     private var PhoneLayout: some View {
         ZStack(alignment: .center) {
             vinylDisc
-                .frame(width: 350, height: 350)
+                .frame(width: 300, height: 300)
                 .clipShape(Circle())
                 .overlay(Circle().stroke(Color.white.opacity(0.3), lineWidth: 1))
                 .shadow(color: .black.opacity(0.3), radius: 14, y: 8)
@@ -153,10 +153,10 @@ struct NowPlayingView: View {
             Circle()
                 .fill(Color.black)
                 .stroke(Color.white, lineWidth: 1)
-                .frame(width: 110, height: 110)
+                .frame(width: 80, height: 80)
             Circle()
                 .fill(Color.white)
-                .frame(width: 8, height: 8)
+                .frame(width: 6, height: 6)
             #endif
         }
     }

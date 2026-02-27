@@ -14,17 +14,19 @@ struct ContentView: View {
     @State private var vinylRotation: Double = 0
     @State private var vinylAnimationTask: Task<Void, Never>?
     @State private var shazamResultSheet = false
+    @State private var showNowPlaying = false
+    @State private var hideNowPlayingTask: Task<Void, Never>?
     private let animationStartDate = Date()
     private let analytics = Analytics.shared
 
     var body: some View {
         ZStack {
+            
             // Animated blob background
             TimelineView(.animation(paused: !player.isPlaying)) { context in
                 let elapsed = context.date.timeIntervalSince(animationStartDate)
                 AnimatedBlobBackground(palette: blobPalette, time: elapsed)
-            }
-            .ignoresSafeArea()
+            }.ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 0) {
                 // Header
@@ -37,9 +39,10 @@ struct ContentView: View {
 
                 // Cover flow station browser
                 CoverFlowStationView(player: player, analytics: analytics)
+                    .safeAreaPadding(.bottom, 24)
 
                 // Now playing
-                if player.isPlaying || player.nowPlayingArtworkURL != nil {
+                if showNowPlaying {
                     NowPlayingView(
                         player: player,
                         vinylRotation: vinylRotation,
@@ -76,12 +79,29 @@ struct ContentView: View {
         .onChange(of: player.isPlaying) { _, isPlaying in
             vinylAnimationTask?.cancel()
             if isPlaying {
+                hideNowPlayingTask?.cancel()
+                showNowPlaying = true
                 vinylAnimationTask = Task {
                     while !Task.isCancelled {
                         try? await Task.sleep(nanoseconds: 16_000_000)
                         vinylRotation += 0.6
                     }
                 }
+            } else {
+                hideNowPlayingTask?.cancel()
+                hideNowPlayingTask = Task {
+                    try? await Task.sleep(for: .seconds(2))
+                    guard !Task.isCancelled else { return }
+                    withAnimation(.easeInOut(duration: 0.5)) {
+                        showNowPlaying = false
+                    }
+                }
+            }
+        }
+        .onChange(of: player.nowPlayingArtworkURL) { _, artworkURL in
+            if artworkURL != nil {
+                hideNowPlayingTask?.cancel()
+                showNowPlaying = true
             }
         }
         .onChange(of: shazam.state) { _, newState in
