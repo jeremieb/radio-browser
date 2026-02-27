@@ -182,19 +182,19 @@ private struct TVOSStationBrowserView: View {
                                 }
                             } label: {
                                 cardContent(for: radio, isSelected: player.selectedStationIndex == index)
-                                    .frame(width: cardSize, height: cardSize)
-                                    .scaleEffect(focusedStationIndex == index ? 1.06 : 1.0)
+//                                    .frame(width: cardSize, height: cardSize)
+//                                    .scaleEffect(focusedStationIndex == index ? 1.06 : 1.0)
                                     .animation(.spring(response: 0.32, dampingFraction: 0.78), value: focusedStationIndex)
                             }
-                            .buttonStyle(.plain)
-                            .focusEffectDisabled()
+//                            .buttonStyle(.plain)
+//                            .focusEffectDisabled()
                             .focused($focusedStationIndex, equals: index)
                             .disabled(radio.disable ?? false)
                             .id(index)
                         }
                     }
                     .padding(.horizontal, max(0, (geo.size.width - cardSize) / 2))
-                    .padding(.vertical, player.isPlaying ? 16 : 40)
+                    .padding(.vertical, 60)
                 }
                 .onAppear {
                     let index = player.selectedStationIndex
@@ -240,47 +240,25 @@ private struct TVOSStationBrowserView: View {
 
     @ViewBuilder
     private func cardContent(for radio: Radio, isSelected: Bool) -> some View {
-        ZStack(alignment: .bottomLeading) {
-            if let imageName = radio.image, !imageName.isEmpty {
-                Image(imageName)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: cardSize, height: cardSize)
-                    .clipped()
-            } else {
-                Rectangle()
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color(red: 0.32, green: 0.39, blue: 0.72),
-                                Color(red: 0.20, green: 0.25, blue: 0.55),
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
+        if let imageName = radio.image, !imageName.isEmpty {
+            Image(imageName)
+                .resizable()
+                .scaledToFill()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
+        } else {
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.32, green: 0.39, blue: 0.72),
+                            Color(red: 0.20, green: 0.25, blue: 0.55),
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
                     )
-            }
-
-            LinearGradient(
-                colors: [.clear, .black.opacity(0.8)],
-                startPoint: .center,
-                endPoint: .bottom
-            )
-
-            Text(radio.name ?? "")
-                .font(.footnote).fontWeight(.semibold).fontWidth(.expanded)
-                .foregroundStyle(.white)
-                .lineLimit(1)
-                .padding(.horizontal, 12)
-                .padding(.bottom, 12)
-
-            if isSelected {
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .strokeBorder(.white.opacity(0.9), lineWidth: 2)
-            }
+                )
         }
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .opacity(radio.disable ?? false ? 0.4 : 1)
     }
 }
 #endif
