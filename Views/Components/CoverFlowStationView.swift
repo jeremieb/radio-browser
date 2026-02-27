@@ -12,7 +12,10 @@ struct CoverFlowStationView: View {
     private let maxRotation: Double = 55
     private let rotationFalloff: Double = 0.6
 
-    private var cardSize: CGFloat { player.isPlaying ? baseCardSize * 0.6 : baseCardSize }
+    // Card size is always the base — layout never changes.
+    // The playing shrink is done purely via scaleEffect so scroll layout is unaffected.
+    private let cardSize: CGFloat = 220
+    private var playingScale: CGFloat { player.isPlaying ? 0.6 : 1.0 }
 
     // Drives both user-gesture snapping and programmatic scrolling.
     // scrollPosition(id:anchor:.center) ensures every settled position
@@ -31,9 +34,9 @@ struct CoverFlowStationView: View {
                 }
                 .scrollTargetLayout()
                 .padding(.horizontal, (totalWidth - cardSize) / 2)
-                .padding(.vertical, verticalPadding)
+                .padding(.vertical, player.isPlaying ? 16 : verticalPadding)
             }
-            .scrollTargetBehavior(.viewAligned(limitBehavior: .alwaysByOne))
+            .scrollTargetBehavior(.viewAligned)
             // anchor: .center makes every snap (user or programmatic) land centred
             .scrollPosition(id: $scrolledID, anchor: .center)
             .coordinateSpace(name: "coverFlowContainer")
@@ -53,6 +56,12 @@ struct CoverFlowStationView: View {
                     scrolledID = newIndex
                 }
             }
+            // Re-centre on the selected station whenever playback state changes
+            .onChange(of: player.isPlaying) { _, _ in
+                withAnimation(.spring(response: 0.45, dampingFraction: 0.75)) {
+                    scrolledID = player.selectedStationIndex
+                }
+            }
             // When the user scrolls away, start the 3-second snap-back timer
             .onChange(of: scrolledID) { _, newID in
                 guard player.isPlaying, let id = newID,
@@ -61,7 +70,6 @@ struct CoverFlowStationView: View {
             }
         }
         .frame(height: cardSize + verticalPadding * 2)
-        .animation(.spring(response: 0.45, dampingFraction: 0.75), value: player.isPlaying)
     }
 
     // MARK: - Snap-back
@@ -91,7 +99,7 @@ struct CoverFlowStationView: View {
             let containerMidX = containerWidth / 2
             let offset = cardMidX - containerMidX
 
-            let normalizedOffset = offset / (cardSize + spacing)
+            let normalizedOffset = offset / (cardSize + spacing) / playingScale
             let clampedOffset = max(-2.0, min(2.0, normalizedOffset))
 
             let rotation = -clampedOffset * maxRotation * rotationFalloff
@@ -99,25 +107,16 @@ struct CoverFlowStationView: View {
             let verticalShift = abs(clampedOffset) * 14.0
 
             Button {
-                if isFocused {
-                    player.playStation(at: index)
-                    if let radioName = radio.name {
-                        analytics.sendSignal(signal: "play", parameters: ["radio.name": radioName])
-                    }
-                } else {
-                    // Scroll this card to centre; schedule snap-back if something is playing
-                    snapBackTask?.cancel()
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                        scrolledID = index
-                    }
-                    if player.isPlaying {
-                        scheduleSnapBack(to: player.selectedStationIndex)
-                    }
+                // Always play the tapped station; onChange(selectedStationIndex) snaps it to centre
+                player.playStation(at: index)
+                if let radioName = radio.name {
+                    analytics.sendSignal(signal: "play", parameters: ["radio.name": radioName])
                 }
             } label: {
                 cardContent(for: radio, isPlaying: isPlaying, isFocused: isFocused)
                     .frame(width: cardSize, height: cardSize)
-                    .scaleEffect(scale)
+                    // playingScale shrinks the card visually without affecting layout
+                    .scaleEffect(scale * playingScale)
                     .rotation3DEffect(
                         .degrees(rotation),
                         axis: (x: 0, y: 1, z: 0),
@@ -131,6 +130,7 @@ struct CoverFlowStationView: View {
                         x: 0,
                         y: isPlaying ? 8 : 4
                     )
+                    .animation(.spring(response: 0.45, dampingFraction: 0.75), value: playingScale)
             }
             .buttonStyle(.plain)
             .disabled(radio.disable ?? false)

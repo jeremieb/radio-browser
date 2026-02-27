@@ -39,7 +39,6 @@ struct ContentView: View {
 
                 // Cover flow station browser
                 CoverFlowStationView(player: player, analytics: analytics)
-                    .safeAreaPadding(.bottom, 24)
 
                 // Now playing
                 if showNowPlaying {
@@ -117,7 +116,7 @@ struct ContentView: View {
                 withAnimation(.default) { shazamPulse = false }
             }
         }
-        .animation(.easeInOut(duration: 0.5), value: player.isPlaying)
+
     }
 
     private func refreshBlobPalette() async {

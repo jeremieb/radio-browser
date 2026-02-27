@@ -22,12 +22,13 @@ struct NowPlayingView: View {
     private var PhoneLayout: some View {
         ZStack(alignment: .center) {
             vinylDisc
-                .frame(width: 300, height: 300)
+                .frame(width: 280, height: 280)
                 .clipShape(Circle())
                 .overlay(Circle().stroke(Color.white.opacity(0.3), lineWidth: 1))
                 .shadow(color: .black.opacity(0.3), radius: 14, y: 8)
                 .rotationEffect(.degrees(vinylRotation))
             VStack(alignment: .center, spacing: 8) {
+                
                 VStack(alignment: .leading) {
                     Text(player.nowPlayingTitle)
                         .font(.body).fontWidth(.expanded).fontWeight(.bold)
@@ -45,25 +46,31 @@ struct NowPlayingView: View {
                             .shadow(color: .black.opacity(0.65), radius: 8, x: 0, y: 3)
                     }
                 }.padding(.top).frame(maxWidth: .infinity, alignment: .leading)
+                
                 Spacer()
-                VStack(alignment: .leading) {
-                    ShazamButtonView(shazamPulse: shazamPulse, analytics: analytics)
+                
+                HStack(alignment: .center) {
+                    VStack {
+                        ShazamButtonView(shazamPulse: shazamPulse, analytics: analytics)
+                    }.frame(maxWidth: .infinity, alignment: .center)
+                    VStack{
+                        Button {
+                            player.togglePlayback()
+                        } label: {
+                            Image(systemName: player.isPlaying ? "pause.fill" : "play.fill")
+                                .font(.system(size: 34, weight: .heavy))
+                                .foregroundStyle(.white)
+                                .frame(width: 56, height: 56)
+                                .shadow(color: .black.opacity(0.3), radius: 8, y: 4)
+                        }.buttonStyle(.plain)
+                    }.frame(maxWidth: .infinity, alignment: .center)
+                    VStack {
+                        AirPlayRoutePickerView()
+                    }.frame(maxWidth: .infinity, alignment: .center)
                 }
-                .padding(.leading, 60).offset(y: -8)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                
             }.frame(maxWidth: .infinity, alignment: .leading)
-            VStack {
-                Spacer()
-                Button {
-                    player.togglePlayback()
-                } label: {
-                    Image(systemName: player.isPlaying ? "pause.fill" : "play.fill")
-                        .font(.system(size: 34, weight: .heavy))
-                        .foregroundStyle(.white)
-                        .frame(width: 56, height: 56)
-                        .shadow(color: .black.opacity(0.3), radius: 8, y: 4)
-                }.buttonStyle(.plain)
-            }
+
         }.padding(.horizontal)
     }
     
@@ -153,7 +160,7 @@ struct NowPlayingView: View {
             Circle()
                 .fill(Color.black)
                 .stroke(Color.white, lineWidth: 1)
-                .frame(width: 80, height: 80)
+                .frame(width: 70, height: 70)
             Circle()
                 .fill(Color.white)
                 .frame(width: 6, height: 6)
