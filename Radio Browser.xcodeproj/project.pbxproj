@@ -58,6 +58,7 @@
 			membershipExceptions = (
 				Components/AirPlayRoutePickerView.swift,
 				Components/AnimatedBlobBackground.swift,
+				Components/CoverFlowStationView.swift,
 				Components/MenuBarHeaderView.swift,
 				Components/NowPlayingView.swift,
 				Components/ShazamButtonView.swift,

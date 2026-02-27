@@ -28,15 +28,15 @@ struct ContentView: View {
 
             VStack(alignment: .leading, spacing: 0) {
                 // Header
-                Text("Radio Browser")
+                Text("Broadcast Alternative Collective")
                     .font(.title).fontWeight(.bold).fontWidth(.expanded)
                     .foregroundStyle(.white)
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
                     .padding(.bottom, 12)
 
-                // Station strip
-                StationStripView(player: player, analytics: analytics)
+                // Cover flow station browser
+                CoverFlowStationView(player: player, analytics: analytics)
 
                 // Now playing
                 if player.isPlaying || player.nowPlayingArtworkURL != nil {
