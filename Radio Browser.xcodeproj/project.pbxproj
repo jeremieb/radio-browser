@@ -7,7 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0206499B2F5585750095134C /* Radio Browser Intents.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = 020649922F5585750095134C /* Radio Browser Intents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		02064E8B2F5596320095134C /* RadioPlaybackCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02064E8A2F5596320095134C /* RadioPlaybackCoordinator.swift */; };
+		02064E942F5597340095134C /* RadioStationAppEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02064E932F5597340095134C /* RadioStationAppEntity.swift */; };
+		02064E962F5597390095134C /* PlayRadioStationIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02064E952F5597390095134C /* PlayRadioStationIntent.swift */; };
+		02064E982F55973D0095134C /* RadioShortcutsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02064E972F55973D0095134C /* RadioShortcutsProvider.swift */; };
 		022932502F4F107300976C81 /* SystemNowPlayingCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0229324C2F4F0FFA00976C81 /* SystemNowPlayingCenter.swift */; };
 		022932542F4F120000976C81 /* ShazamService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022932532F4F120000976C81 /* ShazamService.swift */; };
 		02BE4C8B2F4F1C1E00FC1D41 /* TelemetryDeck in Frameworks */ = {isa = PBXBuildFile; productRef = 02BE4C8A2F4F1C1E00FC1D41 /* TelemetryDeck */; };
@@ -19,13 +22,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		020649992F5585750095134C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1E5D6CDF261F4D4200D0138B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 020649912F5585750095134C;
-			remoteInfo = "Radio Browser Intent";
-		};
 		02E78A962F4F2BF500B03989 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1E5D6CDF261F4D4200D0138B /* Project object */;
@@ -42,7 +38,6 @@
 			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
 			dstSubfolderSpec = 16;
 			files = (
-				0206499B2F5585750095134C /* Radio Browser Intents.appex in Embed ExtensionKit Extensions */,
 			);
 			name = "Embed ExtensionKit Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -61,7 +56,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		020649922F5585750095134C /* Radio Browser Intents.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = "Radio Browser Intents.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		02064E8A2F5596320095134C /* RadioPlaybackCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioPlaybackCoordinator.swift; sourceTree = "<group>"; };
+		02064E932F5597340095134C /* RadioStationAppEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioStationAppEntity.swift; sourceTree = "<group>"; };
+		02064E952F5597390095134C /* PlayRadioStationIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayRadioStationIntent.swift; sourceTree = "<group>"; };
+		02064E972F55973D0095134C /* RadioShortcutsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioShortcutsProvider.swift; sourceTree = "<group>"; };
 		0229324C2F4F0FFA00976C81 /* SystemNowPlayingCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemNowPlayingCenter.swift; sourceTree = "<group>"; };
 		022932532F4F120000976C81 /* ShazamService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShazamService.swift; sourceTree = "<group>"; };
 		02C28F1B2F50C48700E9E0F4 /* ICYMetadataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICYMetadataService.swift; sourceTree = "<group>"; };
@@ -73,13 +71,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		020649A02F5585750095134C /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 020649912F5585750095134C /* Radio Browser Intents */;
-		};
 		0229324E2F4F104900976C81 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -140,7 +131,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		020649932F5585750095134C /* Radio Browser Intent */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (020649A02F5585750095134C /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Radio Browser Intent"; sourceTree = "<group>"; };
+		020649932F5585750095134C /* Radio Browser Intent */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Radio Browser Intent"; sourceTree = "<group>"; };
 		022932432F4F0EC500976C81 /* Views */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (0229324E2F4F104900976C81 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Views; sourceTree = "<group>"; };
 		02E746B92F4EE30D00CE6A43 /* Models */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (02E746BD2F4EE32D00CE6A43 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Models; sourceTree = "<group>"; };
 		02E746BA2F4EE31600CE6A43 /* View Models */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (02A16B992F4EF3CA009D3C64 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "View Models"; sourceTree = "<group>"; };
@@ -149,13 +140,6 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		0206498F2F5585750095134C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		02E78A832F4F2BF400B03989 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -182,6 +166,10 @@
 				0229324C2F4F0FFA00976C81 /* SystemNowPlayingCenter.swift */,
 				022932532F4F120000976C81 /* ShazamService.swift */,
 				02C28F1B2F50C48700E9E0F4 /* ICYMetadataService.swift */,
+				02064E8A2F5596320095134C /* RadioPlaybackCoordinator.swift */,
+				02064E932F5597340095134C /* RadioStationAppEntity.swift */,
+				02064E952F5597390095134C /* PlayRadioStationIntent.swift */,
+				02064E972F55973D0095134C /* RadioShortcutsProvider.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -216,7 +204,6 @@
 			children = (
 				1E5D6CEB261F4D4300D0138B /* Radio Browser.app */,
 				02E78A862F4F2BF400B03989 /* Radio Browser WidgetExtension.appex */,
-				020649922F5585750095134C /* Radio Browser Intents.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -224,28 +211,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		020649912F5585750095134C /* Radio Browser Intents */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0206499F2F5585750095134C /* Build configuration list for PBXNativeTarget "Radio Browser Intents" */;
-			buildPhases = (
-				0206498E2F5585750095134C /* Sources */,
-				0206498F2F5585750095134C /* Frameworks */,
-				020649902F5585750095134C /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				020649932F5585750095134C /* Radio Browser Intent */,
-			);
-			name = "Radio Browser Intents";
-			packageProductDependencies = (
-			);
-			productName = "Radio Browser Intent";
-			productReference = 020649922F5585750095134C /* Radio Browser Intents.appex */;
-			productType = "com.apple.product-type.extensionkit-extension";
-		};
 		02E78A852F4F2BF400B03989 /* Radio Browser WidgetExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 02E78A9C2F4F2BF500B03989 /* Build configuration list for PBXNativeTarget "Radio Browser WidgetExtension" */;
@@ -282,7 +247,6 @@
 			);
 			dependencies = (
 				02E78A972F4F2BF500B03989 /* PBXTargetDependency */,
-				0206499A2F5585750095134C /* PBXTargetDependency */,
 			);
 			name = "Radio Browser";
 			productName = "Radio Browser (iOS)";
@@ -299,9 +263,6 @@
 				LastSwiftUpdateCheck = 2630;
 				LastUpgradeCheck = 2630;
 				TargetAttributes = {
-					020649912F5585750095134C = {
-						CreatedOnToolsVersion = 26.3;
-					};
 					02E78A852F4F2BF400B03989 = {
 						CreatedOnToolsVersion = 26.3;
 					};
@@ -328,19 +289,11 @@
 			targets = (
 				1E5D6CEA261F4D4300D0138B /* Radio Browser */,
 				02E78A852F4F2BF400B03989 /* Radio Browser WidgetExtension */,
-				020649912F5585750095134C /* Radio Browser Intents */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		020649902F5585750095134C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		02E78A842F4F2BF400B03989 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -359,13 +312,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		0206498E2F5585750095134C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		02E78A822F4F2BF400B03989 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -379,6 +325,10 @@
 			files = (
 				02C28F1C2F50C48700E9E0F4 /* ICYMetadataService.swift in Sources */,
 				022932502F4F107300976C81 /* SystemNowPlayingCenter.swift in Sources */,
+				02064E942F5597340095134C /* RadioStationAppEntity.swift in Sources */,
+				02064E982F55973D0095134C /* RadioShortcutsProvider.swift in Sources */,
+				02064E962F5597390095134C /* PlayRadioStationIntent.swift in Sources */,
+				02064E8B2F5596320095134C /* RadioPlaybackCoordinator.swift in Sources */,
 				022932542F4F120000976C81 /* ShazamService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -386,11 +336,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		0206499A2F5585750095134C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 020649912F5585750095134C /* Radio Browser Intents */;
-			targetProxy = 020649992F5585750095134C /* PBXContainerItemProxy */;
-		};
 		02E78A972F4F2BF500B03989 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 02E78A852F4F2BF400B03989 /* Radio Browser WidgetExtension */;
@@ -399,88 +344,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		0206499D2F5585750095134C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PNJ2ZGDY4C;
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Radio Browser Intent/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Radio Browser Intent";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jeremieberduck.radioBrowser.intents;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
-				SDKROOT = xros;
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-				XROS_DEPLOYMENT_TARGET = 26.2;
-			};
-			name = Debug;
-		};
-		0206499E2F5585750095134C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PNJ2ZGDY4C;
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Radio Browser Intent/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Radio Browser Intent";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jeremieberduck.radioBrowser.intents;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
-				SDKROOT = xros;
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-				VALIDATE_PRODUCT = YES;
-				XROS_DEPLOYMENT_TARGET = 26.2;
-			};
-			name = Release;
-		};
 		02E78A9A2F4F2BF500B03989 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -805,15 +668,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0206499F2F5585750095134C /* Build configuration list for PBXNativeTarget "Radio Browser Intents" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0206499D2F5585750095134C /* Debug */,
-				0206499E2F5585750095134C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		02E78A9C2F4F2BF500B03989 /* Build configuration list for PBXNativeTarget "Radio Browser WidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

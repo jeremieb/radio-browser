@@ -1,6 +1,7 @@
 import Foundation
 
-struct Radio {
+struct Radio: Identifiable {
+    let id: String
     let name: String?
     let streamURL: URL?
     let nowPlayingAPI: URL?
@@ -16,6 +17,7 @@ struct Radio {
 // All URLs below are hardcoded compile-time literals and are guaranteed valid.
 let MyRadios: [Radio] = [
     Radio(
+        id: "nts-1",
         name: "NTS 1",
         streamURL: URL(string: "https://stream-relay-geo.ntslive.net/stream")!,
         nowPlayingAPI: URL(string: "https://www.nts.live/api/v2/live")!,
@@ -25,6 +27,7 @@ let MyRadios: [Radio] = [
         disable: false
     ),
     Radio(
+        id: "nts-2",
         name: "NTS 2",
         streamURL: URL(string: "https://stream-relay-geo.ntslive.net/stream2")!,
         nowPlayingAPI: URL(string: "https://www.nts.live/api/v2/live")!,
@@ -34,6 +37,7 @@ let MyRadios: [Radio] = [
         disable: false
     ),
     Radio(
+        id: "worldwide-fm",
         name: "Worldwide FM",
         streamURL: URL(string: "https://worldwide-fm.radiocult.fm/stream")!,
         nowPlayingAPI: URL(string: "https://api.radiocult.fm/api/station/worldwide-fm/schedule/live")!,
@@ -43,6 +47,7 @@ let MyRadios: [Radio] = [
         disable: false
     ),
     Radio(
+        id: "fip",
         name: "FIP",
         streamURL: URL(string: "https://icecast.radiofrance.fr/fip-hifi.aac?id=radiofrance")!,
         nowPlayingAPI: URL(string: "https://api.radiofrance.fr/livemeta/pull/7")!,
@@ -52,6 +57,7 @@ let MyRadios: [Radio] = [
         disable: false
     ),
     Radio(
+        id: "kiosk-radio",
         name: "Kiosk Radio",
         streamURL: URL(string: "https://kioskradiobxl.out.airtime.pro/kioskradiobxl_b")!,
         nowPlayingAPI: nil,
@@ -61,6 +67,7 @@ let MyRadios: [Radio] = [
         disable: false
     ),
     Radio(
+        id: "lyl-radio",
         name: "Lyl Radio",
         streamURL: URL(string: "https://radio.lyl.live/hls/aac_hifi.m3u8")!,
         nowPlayingAPI: nil,
@@ -70,6 +77,7 @@ let MyRadios: [Radio] = [
         disable: false
     ),
     Radio(
+        id: "the-lot-radio",
         name: "The Lot Radio",
         streamURL: URL(string: "https://fra-prod-catalyst-0.lp-playback.studio/hls/video+85c28sa2o8wppm58/1_0/index.m3u8?tkn=973857786")!,
         nowPlayingAPI: nil,
@@ -79,6 +87,7 @@ let MyRadios: [Radio] = [
         disable: false
     ),
     Radio(
+        id: "tsubaki-fm",
         name: "Tsubaki FM",
         streamURL: URL(string: "https://edge.mixlr.com/channel/vgmet")!,
         nowPlayingAPI: nil,

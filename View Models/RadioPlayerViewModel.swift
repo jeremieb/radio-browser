@@ -46,6 +46,7 @@ final class RadioPlayerViewModel: ObservableObject {
     /// Production init — creates default concrete dependencies.
     convenience init() {
         self.init(nowPlaying: NowPlayingViewModel(), systemNowPlaying: SystemNowPlayingCenter())
+        RadioPlaybackCoordinator.shared.activePlayer = self
     }
 
     /// Designated init for testing — accepts injectable dependencies.
@@ -87,6 +88,11 @@ final class RadioPlayerViewModel: ObservableObject {
         guard MyRadios.indices.contains(index) else { return }
         selectedStationIndex = index
         playSelectedStation()
+    }
+
+    func playStation(byID id: String) {
+        guard let index = MyRadios.firstIndex(where: { $0.id == id }) else { return }
+        playStation(at: index)
     }
 
     func togglePlayback() {

@@ -39,7 +39,10 @@ struct RadioMenuBarView: View {
             .frame(maxWidth: 460, maxHeight: 460, alignment: .topLeading)
             .padding(.vertical)
         }
-        .onAppear { isVisible = true }
+        .onAppear {
+            isVisible = true
+            RadioPlaybackCoordinator.shared.activePlayer = player
+        }
         .onDisappear { isVisible = false }
         .onChange(of: shazam.state) { _, newState in
             switch newState {
