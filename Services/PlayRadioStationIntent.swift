@@ -6,7 +6,7 @@ import AppKit
 struct PlayRadioStationIntent: AppIntent {
     static var title: LocalizedStringResource = "Play Radio Station"
     static var description = IntentDescription("Plays a radio station in Radio Browser")
-    static var supportedModes: IntentModes = .foreground(.immediate)
+    static var supportedModes: IntentModes = [.background, .foreground(.immediate)]
 
     @Parameter(title: "Station")
     var station: RadioStationAppEntity
