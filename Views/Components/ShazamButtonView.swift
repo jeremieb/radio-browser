@@ -9,8 +9,8 @@ import SwiftUI
 
 struct ShazamButtonView: View {
     let shazamPulse: Bool
-    let analytics: Analytics
     @Environment(ShazamService.self) private var shazam
+    @Environment(\.analytics) private var analytics
 
     var body: some View {
         Button {

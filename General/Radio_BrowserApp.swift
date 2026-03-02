@@ -24,6 +24,7 @@ struct Radio_BrowserApp: App {
         MenuBarExtra("Broadcast Alternative Collective", image: "my.radio.wave") {
             RadioMenuBarView()
                 .environment(shazam)
+                .environment(\.analytics, Analytics.shared)
         }
         .menuBarExtraStyle(.window)
 
@@ -37,6 +38,7 @@ struct Radio_BrowserApp: App {
         WindowGroup {
             ContentView()
                 .environment(shazam)
+                .environment(\.analytics, Analytics.shared)
         }
 #endif
     }

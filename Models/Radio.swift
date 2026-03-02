@@ -12,6 +12,8 @@ struct Radio {
     let disable: Bool?
 }
 
+// swiftlint:disable force_unwrapping
+// All URLs below are hardcoded compile-time literals and are guaranteed valid.
 let MyRadios: [Radio] = [
     Radio(
         name: "NTS 1",
@@ -86,3 +88,4 @@ let MyRadios: [Radio] = [
         disable: false
     ),
 ]
+// swiftlint:enable force_unwrapping

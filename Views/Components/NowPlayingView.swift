@@ -2,10 +2,9 @@ import SwiftUI
 
 struct NowPlayingView: View {
     @ObservedObject var player: RadioPlayerViewModel
-    let vinylRotation: Double
     let shazamPulse: Bool
-    let analytics: Analytics
     @Environment(ShazamService.self) private var shazam
+    @Environment(\.analytics) private var analytics
 
     var body: some View {
         #if os(macOS)
@@ -14,10 +13,10 @@ struct NowPlayingView: View {
         PhoneLayout
         #endif
     }
-    
-    
+
+
     // MARK: iOS Layout
-    
+
     @ViewBuilder
     private var PhoneLayout: some View {
         ZStack(alignment: .center) {
@@ -30,7 +29,7 @@ struct NowPlayingView: View {
                 .clipShape(Circle())
                 .overlay(Circle().stroke(Color.white.opacity(0.3), lineWidth: 1))
                 .shadow(color: .black.opacity(0.3), radius: 14, y: 8)
-                .rotationEffect(.degrees(vinylRotation))
+                .rotationEffect(.degrees(player.vinylRotation))
             VStack(alignment: .center, spacing: 8) {
                 #if os(iOS)
                 VStack(alignment: .leading) {
@@ -70,11 +69,11 @@ struct NowPlayingView: View {
                 #endif
 
                 Spacer()
-                
+
                 HStack(alignment: .center) {
                     VStack {
                         #if !os(tvOS)
-                        ShazamButtonView(shazamPulse: shazamPulse, analytics: analytics)
+                        ShazamButtonView(shazamPulse: shazamPulse)
                         #endif
                     }.frame(maxWidth: .infinity, alignment: .center)
                     VStack{
@@ -94,14 +93,14 @@ struct NowPlayingView: View {
                         #endif
                     }.frame(maxWidth: .infinity, alignment: .center)
                 }
-                
+
             }.frame(maxWidth: .infinity, alignment: .leading)
 
         }.padding(.horizontal)
     }
-    
+
     // MARK: MacOS Layout
-    
+
     @ViewBuilder
     private var MacLayout: some View {
         ZStack(alignment: .trailing) {
@@ -110,7 +109,7 @@ struct NowPlayingView: View {
                 .clipShape(Circle())
                 .overlay(Circle().stroke(Color.white.opacity(0.3), lineWidth: 1))
                 .shadow(color: .black.opacity(0.3), radius: 14, y: 8)
-                .rotationEffect(.degrees(vinylRotation))
+                .rotationEffect(.degrees(player.vinylRotation))
 
             VStack(alignment: .leading, spacing: 8) {
                 VStack(alignment: .leading) {
@@ -133,7 +132,7 @@ struct NowPlayingView: View {
                 Spacer(minLength: 0)
 
                 HStack(spacing: 22) {
-                    ShazamButtonView(shazamPulse: shazamPulse, analytics: analytics)
+                    ShazamButtonView(shazamPulse: shazamPulse)
 
                     Button {
                         player.togglePlayback()

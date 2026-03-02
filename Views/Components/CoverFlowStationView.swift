@@ -3,7 +3,7 @@ import SwiftUI
 
 struct CoverFlowStationView: View {
     @ObservedObject var player: RadioPlayerViewModel
-    let analytics: Analytics
+    @Environment(\.analytics) private var analytics
 
     private let baseCardSize: CGFloat = 220
     private let spacing: CGFloat = 12
@@ -192,10 +192,7 @@ struct CoverFlowStationView: View {
 #Preview {
     ZStack {
         Color.black.ignoresSafeArea()
-        CoverFlowStationView(
-            player: RadioPlayerViewModel(),
-            analytics: Analytics.shared
-        )
+        CoverFlowStationView(player: RadioPlayerViewModel())
     }
 }
 #endif

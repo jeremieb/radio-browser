@@ -1,4 +1,5 @@
 import AVFoundation
+import SwiftUI
 
 @MainActor
 final class RadioPlayerViewModel: ObservableObject {
@@ -20,6 +21,9 @@ final class RadioPlayerViewModel: ObservableObject {
         #endif
         return true
     }()
+
+    // MARK: - Published state
+
     @Published var selectedStationIndex = 0
     @Published var isPlaying = false
     @Published var nowPlayingTitle = "Not playing"
@@ -27,12 +31,27 @@ final class RadioPlayerViewModel: ObservableObject {
     @Published var nowPlayingArtworkURL: URL?
     @Published var nowPlayingErrorMessage: String?
 
-    let nowPlaying = NowPlayingViewModel()
+    /// Artwork-derived palette used to tint the animated blob background.
+    @Published var blobPalette: [Color] = defaultBlobPalette
+    /// Vinyl disc rotation angle, driven by an internal 60 fps task while playing.
+    @Published var vinylRotation: Double = 0
+    /// Controls now-playing panel visibility with an automatic 2-second hide delay on pause.
+    @Published var showNowPlaying: Bool = false
 
-    private var player: AVPlayer?
-    private let systemNowPlaying = SystemNowPlayingCenter()
+    // MARK: - Dependencies
 
-    init() {
+    let nowPlaying: NowPlayingProviding
+    private let systemNowPlaying: SystemNowPlayingProviding
+
+    /// Production init — creates default concrete dependencies.
+    convenience init() {
+        self.init(nowPlaying: NowPlayingViewModel(), systemNowPlaying: SystemNowPlayingCenter())
+    }
+
+    /// Designated init for testing — accepts injectable dependencies.
+    init(nowPlaying: NowPlayingProviding, systemNowPlaying: SystemNowPlayingProviding) {
+        self.nowPlaying = nowPlaying
+        self.systemNowPlaying = systemNowPlaying
         _ = Self.audioSessionConfigured
 
         nowPlaying.onUpdate = { [weak self] snapshot in
@@ -60,6 +79,10 @@ final class RadioPlayerViewModel: ObservableObject {
         )
     }
 
+    // MARK: - Playback
+
+    private var player: AVPlayer?
+
     func playStation(at index: Int) {
         guard MyRadios.indices.contains(index) else { return }
         selectedStationIndex = index
@@ -75,15 +98,9 @@ final class RadioPlayerViewModel: ObservableObject {
     }
 
     func playSelectedStation() {
-        guard MyRadios.indices.contains(selectedStationIndex) else {
-            return
-        }
-
+        guard MyRadios.indices.contains(selectedStationIndex) else { return }
         let radio = MyRadios[selectedStationIndex]
-
-        guard let streamURL = radio.streamURL else {
-            return
-        }
+        guard let streamURL = radio.streamURL else { return }
 
         if player != nil {
             stopPlayback(resetNowPlaying: true)
@@ -94,6 +111,7 @@ final class RadioPlayerViewModel: ObservableObject {
         player?.play()
 
         isPlaying = true
+        updatePresentationState(isNowPlaying: true)
         publishNowPlaying(snapshot: nil)
         nowPlaying.startUpdating(for: radio)
     }
@@ -102,11 +120,13 @@ final class RadioPlayerViewModel: ObservableObject {
         guard let player else { return }
         player.pause()
         isPlaying = false
+        updatePresentationState(isNowPlaying: false)
         systemNowPlaying.markPaused()
     }
 
     func stop() {
         stopPlayback(resetNowPlaying: false)
+        updatePresentationState(isNowPlaying: false)
         nowPlaying.setStoppedState()
         publishNowPlaying(snapshot: nil)
     }
@@ -115,6 +135,7 @@ final class RadioPlayerViewModel: ObservableObject {
         if let player {
             player.play()
             isPlaying = true
+            updatePresentationState(isNowPlaying: true)
             publishNowPlaying(snapshot: nil)
         } else {
             playSelectedStation()
@@ -142,6 +163,14 @@ final class RadioPlayerViewModel: ObservableObject {
         nowPlayingSubtitle = snapshot.subtitle
         nowPlayingArtworkURL = snapshot.artworkURL
         nowPlayingErrorMessage = snapshot.errorMessage
+
+        if snapshot.artworkURL != nil {
+            hideTask?.cancel()
+            showNowPlaying = true
+        }
+
+        paletteTask?.cancel()
+        paletteTask = Task { await updateBlobPalette(from: snapshot.artworkURL) }
     }
 
     private func publishNowPlaying(snapshot: NowPlayingSnapshot?) {
@@ -159,5 +188,43 @@ final class RadioPlayerViewModel: ObservableObject {
             artworkURL: currentArtworkURL,
             isPlaying: isPlaying
         )
+    }
+
+    // MARK: - Presentation state
+
+    private var vinylTask: Task<Void, Never>?
+    private var hideTask: Task<Void, Never>?
+
+    private func updatePresentationState(isNowPlaying: Bool) {
+        vinylTask?.cancel()
+        if isNowPlaying {
+            hideTask?.cancel()
+            showNowPlaying = true
+            vinylTask = Task {
+                while !Task.isCancelled {
+                    try? await Task.sleep(nanoseconds: 16_000_000) // ~60 fps
+                    vinylRotation += 0.6
+                }
+            }
+        } else {
+            hideTask?.cancel()
+            hideTask = Task {
+                try? await Task.sleep(for: .seconds(2))
+                guard !Task.isCancelled else { return }
+                showNowPlaying = false
+            }
+        }
+    }
+
+    // MARK: - Blob palette
+
+    private var paletteTask: Task<Void, Never>?
+
+    private func updateBlobPalette(from url: URL?) async {
+        guard let url else { blobPalette = defaultBlobPalette; return }
+        guard let (data, _) = try? await URLSession.shared.data(from: url) else { return }
+        guard !Task.isCancelled else { return }
+        let palette = extractPalette(from: data)
+        if !palette.isEmpty { blobPalette = palette }
     }
 }

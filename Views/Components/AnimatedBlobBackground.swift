@@ -54,6 +54,29 @@ struct AnimatedBlobBackground: View {
     }
 }
 
+// MARK: - Default palette / cross-platform helper
+
+let defaultBlobPalette: [Color] = [
+    Color(red: 0.42, green: 0.58, blue: 0.86),
+    Color(red: 0.25, green: 0.42, blue: 0.78),
+    Color(red: 0.55, green: 0.32, blue: 0.82),
+    Color(red: 0.30, green: 0.60, blue: 0.90),
+]
+
+/// Extracts a four-colour quadrant palette from raw image data.
+/// Returns `defaultBlobPalette` when extraction fails.
+func extractPalette(from data: Data) -> [Color] {
+#if os(iOS) || os(tvOS)
+    guard let image = UIImage(data: data) else { return defaultBlobPalette }
+    return image.quadrantPalette.map { Color(uiColor: $0) }
+#elseif os(macOS)
+    guard let image = NSImage(data: data) else { return defaultBlobPalette }
+    return image.quadrantPalette.map { Color(nsColor: $0) }
+#else
+    return defaultBlobPalette
+#endif
+}
+
 // MARK: - Cross-platform image palette extraction
 
 #if os(macOS)

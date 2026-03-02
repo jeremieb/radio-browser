@@ -1,7 +1,19 @@
 import Foundation
 
+// MARK: - Protocol
+
 @MainActor
-final class NowPlayingViewModel: ObservableObject {
+protocol NowPlayingProviding: AnyObject {
+    var onUpdate: ((NowPlayingSnapshot) -> Void)? { get set }
+    func startUpdating(for radio: Radio)
+    func stopUpdating(resetState: Bool)
+    func setStoppedState()
+}
+
+// MARK: - Implementation
+
+@MainActor
+final class NowPlayingViewModel: ObservableObject, NowPlayingProviding {
     @Published private(set) var title = "Not playing"
     @Published private(set) var subtitle: String?
     @Published private(set) var artworkURL: URL?

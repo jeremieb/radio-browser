@@ -1,6 +1,21 @@
 import Foundation
 import MediaPlayer
 
+// MARK: - Protocol
+
+@MainActor
+protocol SystemNowPlayingProviding: AnyObject {
+    func configureRemoteCommands(
+        onPlay: @escaping @Sendable () -> MPRemoteCommandHandlerStatus,
+        onPause: @escaping @Sendable () -> MPRemoteCommandHandlerStatus,
+        onStop: @escaping @Sendable () -> MPRemoteCommandHandlerStatus,
+        onToggle: @escaping @Sendable () -> MPRemoteCommandHandlerStatus
+    )
+    func update(stationName: String?, title: String, subtitle: String?, artworkURL: URL?, isPlaying: Bool)
+    func markPaused()
+    func clear()
+}
+
 #if os(iOS) || os(tvOS)
 import UIKit
 private typealias PlatformImage = UIImage
@@ -9,8 +24,10 @@ import AppKit
 private typealias PlatformImage = NSImage
 #endif
 
+// MARK: - Implementation
+
 @MainActor
-final class SystemNowPlayingCenter {
+final class SystemNowPlayingCenter: SystemNowPlayingProviding {
     private let infoCenter = MPNowPlayingInfoCenter.default()
     private var nowPlayingInfo: [String: Any] = [:]
     private var artworkTask: Task<Void, Never>?

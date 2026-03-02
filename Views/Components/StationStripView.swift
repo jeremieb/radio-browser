@@ -2,7 +2,7 @@ import SwiftUI
 
 struct StationStripView: View {
     @ObservedObject var player: RadioPlayerViewModel
-    let analytics: Analytics
+    @Environment(\.analytics) private var analytics
 
     private let cardSize: CGFloat = 58
     private let cardSpacing: CGFloat = 16
